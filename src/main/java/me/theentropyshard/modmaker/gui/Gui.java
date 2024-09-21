@@ -28,12 +28,11 @@ public class Gui {
     public Gui() {
         Gui.prepare();
 
-        ProjectTreeModel treeModel = new ProjectTreeModel();
-        ProjectTree projectTree = new ProjectTree(treeModel);
+        JPanel root = new JPanel();
 
         JFrame frame = new JFrame("ModMaker");
-        projectTree.setPreferredSize(new Dimension(800, 600));
-        frame.add(projectTree, BorderLayout.CENTER);
+        root.setPreferredSize(new Dimension(800, 600));
+        frame.add(root, BorderLayout.CENTER);
         frame.pack();
         SwingUtils.centerWindow(frame, 0);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
