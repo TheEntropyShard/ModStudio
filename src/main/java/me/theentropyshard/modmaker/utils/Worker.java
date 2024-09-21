@@ -16,10 +16,29 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker;
+package me.theentropyshard.modmaker.utils;
 
-public class Main {
-    public static void main(String[] args) {
-        new ModMaker();
+import javax.swing.*;
+
+public abstract class Worker<T, V> extends SwingWorker<T, V> {
+    private final String actionName;
+
+    public Worker(String name) {
+        this.actionName = name;
     }
+
+    @Override
+    protected final T doInBackground() {
+        try {
+            return this.work();
+        } catch (Exception e) {
+            System.err.println("Exception while " + this.actionName);
+
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    protected abstract T work() throws Exception;
 }

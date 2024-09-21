@@ -18,7 +18,8 @@
 
 package me.theentropyshard.modmaker;
 
-import me.theentropyshard.modmaker.gui.Gui;
+import me.theentropyshard.modmaker.gui.controller.MainViewController;
+import me.theentropyshard.modmaker.gui.view.MainView;
 import me.theentropyshard.modmaker.project.ProjectManager;
 
 import java.nio.file.Path;
@@ -38,7 +39,8 @@ public class ModMaker {
 
         this.projectManager = new ProjectManager(this.workDir);
 
-        new Gui();
+        MainViewController mainController = new MainViewController();
+        mainController.show();
     }
 
     private static ModMaker instance;

@@ -47,6 +47,7 @@ ext {
 }
 
 dependencies {
+    implementation 'com.miglayout:miglayout-swing:5.3'
     implementation "com.formdev:flatlaf:$flatlaf"
     implementation "com.formdev:flatlaf-extras:$flatlaf"
     implementation "com.google.code.gson:gson:$gson"

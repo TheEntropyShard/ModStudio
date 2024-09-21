@@ -16,10 +16,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker;
+package me.theentropyshard.modmaker.gui.project;
 
-public class Main {
-    public static void main(String[] args) {
-        new ModMaker();
+import javax.swing.tree.DefaultMutableTreeNode;
+
+public class ProjectNode extends DefaultMutableTreeNode {
+    public ProjectNode() {
+
+    }
+
+    public ProjectNode(Object userObject) {
+        super(userObject);
+    }
+
+    public ProjectNode(Object userObject, boolean allowsChildren) {
+        super(userObject, allowsChildren);
     }
 }
