@@ -16,12 +16,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker;
+package me.theentropyshard.modmaker.gui;
 
-import me.theentropyshard.modmaker.gui.Gui;
+import javax.swing.*;
 
-public class Main {
-    public static void main(String[] args) {
-        new Gui();
+public class ProjectTree extends JTree {
+    public ProjectTree(ProjectTreeModel treeModel) {
+        super(treeModel);
+
+        this.setShowsRootHandles(true);
     }
 }
