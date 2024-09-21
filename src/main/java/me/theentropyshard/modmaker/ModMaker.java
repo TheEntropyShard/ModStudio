@@ -18,20 +18,44 @@
 
 package me.theentropyshard.modmaker;
 
+import me.theentropyshard.modmaker.gui.Gui;
 import me.theentropyshard.modmaker.project.ProjectManager;
 
-import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Main {
-    public static void main(String[] args) {
-        //new ModMaker();
+public class ModMaker {
+    private final Path workDir;
+    private final Path projectsDir;
 
-        ProjectManager projectManager = new ProjectManager(Paths.get(System.getProperty("user.dir")).resolve("projects"));
-        try {
-            projectManager.createProject("my-proj", "myname", "0.0.1");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private final ProjectManager projectManager;
+
+    public ModMaker() {
+        instance = this;
+
+        this.workDir = Paths.get(System.getProperty("user.dir"));
+        this.projectsDir = this.workDir.resolve("projects");
+
+        this.projectManager = new ProjectManager(this.workDir);
+
+        new Gui();
+    }
+
+    private static ModMaker instance;
+
+    public static ModMaker getInstance() {
+        return instance;
+    }
+
+    public Path getWorkDir() {
+        return this.workDir;
+    }
+
+    public Path getProjectsDir() {
+        return this.projectsDir;
+    }
+
+    public ProjectManager getProjectManager() {
+        return this.projectManager;
     }
 }

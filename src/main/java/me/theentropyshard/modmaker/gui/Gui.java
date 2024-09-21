@@ -22,13 +22,37 @@ import com.formdev.flatlaf.FlatLightLaf;
 import me.theentropyshard.modmaker.utils.SwingUtils;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 
 public class Gui {
     public Gui() {
         Gui.prepare();
 
-        JPanel root = new JPanel();
+        DefaultMutableTreeNode project = new DefaultMutableTreeNode("Project");
+        DefaultMutableTreeNode blocks = new DefaultMutableTreeNode("Blocks");
+        blocks.add(new DefaultMutableTreeNode("sponge.json"));
+        project.add(blocks);
+        DefaultMutableTreeNode textures = new DefaultMutableTreeNode("Textures");
+        textures.add(new DefaultMutableTreeNode("sponge.png"));
+        project.add(textures);
+        JTree root = new JTree(project);
+        root.setCellRenderer(new DefaultTreeCellRenderer() {
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+                Component c = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+                String s = String.valueOf(value);
+                if (s.endsWith(".png")) {
+                    this.setIcon(Icons.get("image"));
+                } else if (s.endsWith(".json")) {
+                    this.setIcon(Icons.get("json"));
+                }
+
+                return c;
+            }
+        });
 
         JFrame frame = new JFrame("ModMaker");
         root.setPreferredSize(new Dimension(800, 600));
