@@ -1,0 +1,95 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url = 'https://jitpack.io'
+            content {
+                includeGroup 'com.github.ATLauncher.gradle-macappbundle'
+            }
+        }
+    }
+
+    dependencies {
+        classpath 'com.github.ATLauncher.gradle-macappbundle:edu.sc.seis.macAppBundle.gradle.plugin:d22f8cdb94'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'application'
+    //id 'de.undercouch.download' version '5.4.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.github.gmazzo.buildconfig' version '5.3.5'
+    //id 'edu.sc.seis.launch4j' version '3.0.5'
+    //id 'edu.sc.seis.macAppBundle' version '2.3.0'
+}
+
+def theMainClass = 'me.theentropyshard.modmaker.Main'
+def theVersion = '0.0.1'
+def theName = 'ModMaker'
+
+group = 'me.theentropyshard'
+version = theVersion
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    flatlaf = '3.4.1'
+    gson = '2.10.1'
+    zip4j = '2.11.5'
+    jcommander = '1.82'
+    okhttp = '4.12.0'
+    jna = '5.14.0'
+    log4j = '2.20.0'
+    retrofit = '2.11.0'
+}
+
+dependencies {
+    implementation "com.formdev:flatlaf:$flatlaf"
+    implementation "com.google.code.gson:gson:$gson"
+    implementation "net.lingala.zip4j:zip4j:$zip4j"
+    implementation "com.beust:jcommander:$jcommander"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp"
+    implementation "net.java.dev.jna:jna:$jna"
+    implementation "net.java.dev.jna:jna-platform:$jna"
+    implementation "org.apache.logging.log4j:log4j-api:$log4j"
+    implementation "org.apache.logging.log4j:log4j-core:$log4j"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+application {
+    mainClass = theMainClass
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': theMainClass,
+                'Implementation-Title': theName,
+                'Implementation-Version': theVersion,
+                'Implementation-Vendor': theName
+        )
+    }
+}
+
+shadowJar {
+    archiveClassifier = ''
+    archiveBaseName = theName
+    archiveVersion = theVersion
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+}
