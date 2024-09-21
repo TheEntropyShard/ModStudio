@@ -28,7 +28,7 @@ public class Icons {
     private static final Map<String, Icon> ICONS = new HashMap<>();
 
     public static void load() {
-        for (String name : new String[]{"folder", "image", "json"}) {
+        for (String name : new String[]{"folder", "image", "json", "project"}) {
             Icons.ICONS.put(name, FlatLafUtils.getSvgIcon("/icons/" + name + ".svg"));
         }
     }
