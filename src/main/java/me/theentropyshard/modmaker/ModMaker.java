@@ -35,7 +35,7 @@ public class ModMaker {
         this.workDir = Paths.get(System.getProperty("user.dir"));
         this.projectsDir = this.workDir.resolve("projects");
 
-        this.projectManager = new ProjectManager(this.workDir);
+        this.projectManager = new ProjectManager(this.projectsDir);
 
 
     }
