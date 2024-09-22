@@ -19,23 +19,80 @@
 package me.theentropyshard.modmaker.gui.controller;
 
 import me.theentropyshard.modmaker.gui.project.ProjectTree;
-import me.theentropyshard.modmaker.gui.view.MainView;
-import me.theentropyshard.modmaker.gui.view.ProjectCreationView;
-import me.theentropyshard.modmaker.gui.view.ProjectView;
+import me.theentropyshard.modmaker.gui.view.*;
 import me.theentropyshard.modmaker.utils.SwingUtils;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class MainViewController {
     private final MainView mainView;
+    private final JTabbedPane tabbedPane;
 
     public MainViewController() {
         this.mainView = new MainView();
+        this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 
         ProjectView projectView = new ProjectView(new Dimension(1280, 720));
-        projectView.setProjectTree(new ProjectTree());
-        projectView.setEditorView(new JPanel());
+
+        ProjectTree tree = new ProjectTree();
+        tree.addListener(new ProjectTree.ProjectTreeListenerAdapter() {
+            @Override
+            public void leftDoubleClick(DefaultMutableTreeNode treeNode, MouseEvent event) {
+                DefaultMutableTreeNode parent = (DefaultMutableTreeNode) treeNode.getParent();
+
+                String s = String.valueOf(parent.getUserObject());
+
+                if (s.equals("Blocks")) {
+                    String blockName = String.valueOf(treeNode.getUserObject());
+                    int index = tabbedPane.indexOfTab(blockName);
+                    BlockEditView blockEditView = (BlockEditView) tabbedPane.getComponentAt(index);
+                } else if (s.equals("Items")) {
+                    String itemName = String.valueOf(treeNode.getUserObject());
+                    int index = tabbedPane.indexOfTab(itemName);
+                    ItemEditView itemEditView = (ItemEditView) tabbedPane.getComponentAt(index);
+                }
+            }
+
+            @Override
+            public void rightClick(DefaultMutableTreeNode treeNode, MouseEvent event) {
+                JPopupMenu popupMenu = new JPopupMenu();
+
+                String s = String.valueOf(treeNode.getUserObject());
+
+                if (s.equals("Blocks")) {
+                    JMenuItem createBlockItem = new JMenuItem("Create Block");
+                    createBlockItem.addActionListener(e -> {
+                        String name = "Block " + Math.random();
+                        BlockEditView component = new BlockEditView();
+                        tabbedPane.addTab(name, component);
+                        treeNode.add(new DefaultMutableTreeNode(name));
+                        ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(treeNode);
+                    });
+
+                    popupMenu.add(createBlockItem);
+                } else if (s.equals("Items")) {
+                    JMenuItem createBlockItem = new JMenuItem("Create Item");
+                    createBlockItem.addActionListener(e -> {
+                        String name = "Item " + Math.random();
+                        ItemEditView component = new ItemEditView(name);
+                        tabbedPane.add(name, component);
+                        treeNode.add(new DefaultMutableTreeNode(name));
+                        ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(treeNode);
+                    });
+
+                    popupMenu.add(createBlockItem);
+                }
+
+                popupMenu.show(tree, event.getX(), event.getY());
+            }
+        });
+
+        projectView.setProjectTree(tree);
+        projectView.setEditorView(this.tabbedPane);
 
         this.mainView.createComponents(projectView);
 
@@ -46,7 +103,7 @@ public class MainViewController {
         JDialog dialog = new JDialog(this.mainView.getFrame(), "Create New Project", true);
         ProjectCreationView comp = new ProjectCreationView();
         dialog.getRootPane().setDefaultButton(comp.getCreateButton());
-        comp.setPreferredSize(new Dimension((int) (1280*0.5), (int) (720*0.5)));
+        comp.setPreferredSize(new Dimension((int) (1280 * 0.5), (int) (720 * 0.5)));
         dialog.add(comp, BorderLayout.CENTER);
         dialog.pack();
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

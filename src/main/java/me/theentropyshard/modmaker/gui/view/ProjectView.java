@@ -38,10 +38,14 @@ public class ProjectView extends JPanel {
     }
 
     public void setProjectTree(ProjectTree tree) {
+        Dimension size = this.getPreferredSize();
+        tree.setMinimumSize(new Dimension((int) (size.width * 0.25), size.height));
         this.splitPane.setLeftComponent(tree);
     }
 
     public void setEditorView(Component component) {
+        Dimension size = this.getPreferredSize();
+        component.setMinimumSize(new Dimension((int) (size.width * 0.75), size.height));
         this.splitPane.setRightComponent(component);
     }
 }

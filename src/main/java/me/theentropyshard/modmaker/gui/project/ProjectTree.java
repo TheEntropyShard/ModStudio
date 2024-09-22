@@ -24,10 +24,17 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.event.MouseEvent;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class ProjectTree extends JTree {
+    private final Set<ProjectTreeListener> listeners;
+
     public ProjectTree() {
         super(ProjectTree.getRootNode());
+
+        this.listeners = new LinkedHashSet<>();
 
         this.setShowsRootHandles(true);
         this.setCellRenderer(new ProjectTreeCellRenderer());
@@ -42,26 +49,53 @@ public class ProjectTree extends JTree {
                 return;
             }
 
-            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
-            } else if (SwingUtilities.isRightMouseButton(e)) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                String s = String.valueOf(node.getUserObject());
-
-                // create popup menu
+            for (ProjectTreeListener listener : this.listeners) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+                    listener.leftDoubleClick(node, e);
+                } else if (SwingUtilities.isRightMouseButton(e)) {
+                    listener.rightClick(node, e);
+                }
             }
         }));
+    }
+
+    public void addListener(ProjectTreeListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public interface ProjectTreeListener {
+        void leftDoubleClick(DefaultMutableTreeNode treeNode, MouseEvent event);
+
+        void rightClick(DefaultMutableTreeNode treeNode, MouseEvent event);
+    }
+
+    public static abstract class ProjectTreeListenerAdapter implements ProjectTreeListener {
+        public ProjectTreeListenerAdapter() {
+
+        }
+
+        @Override
+        public void leftDoubleClick(DefaultMutableTreeNode treeNode, MouseEvent event) {
+
+        }
+
+        @Override
+        public void rightClick(DefaultMutableTreeNode treeNode, MouseEvent event) {
+
+        }
     }
 
     private static TreeNode getRootNode() {
         ProjectNode rootNode = new ProjectNode("More blocks");
 
         CategoryNode blocksNode = new CategoryNode("Blocks");
-        blocksNode.add(new DefaultMutableTreeNode("Green Planks"));
+        //blocksNode.add(new DefaultMutableTreeNode("Green Planks"));
         rootNode.add(blocksNode);
 
         CategoryNode itemsNode = new CategoryNode("Items");
-        itemsNode.add(new DefaultMutableTreeNode("Banana"));
+        //itemsNode.add(new DefaultMutableTreeNode("Banana"));
         rootNode.add(itemsNode);
 
         return rootNode;

@@ -18,6 +18,7 @@
 
 package me.theentropyshard.modmaker.gui;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import me.theentropyshard.modmaker.utils.FlatLafUtils;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Icons {
-    private static final Map<String, Icon> ICONS = new HashMap<>();
+    private static final Map<String, FlatSVGIcon> ICONS = new HashMap<>();
 
     public static void load() {
         for (String name : new String[]{"folder", "image", "json", "project", "unknown"}) {
@@ -37,8 +38,8 @@ public class Icons {
         Icons.load();
     }
 
-    public static Icon get(String name) {
-        Icon icon = Icons.ICONS.get(name);
+    public static FlatSVGIcon get(String name) {
+        FlatSVGIcon icon = Icons.ICONS.get(name);
 
         if (icon == null) {
             throw new RuntimeException("Icon with name " + name + " does not exist");

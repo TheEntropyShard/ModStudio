@@ -18,39 +18,36 @@
 
 package me.theentropyshard.modmaker.gui.project;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import me.theentropyshard.modmaker.gui.Icons;
 
 import javax.swing.*;
-import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 
-public class ProjectTreeCellRenderer implements TreeCellRenderer {
-    private final JLabel label;
-
-    public ProjectTreeCellRenderer() {
-        this.label = new JLabel();
-    }
-
+public class ProjectTreeCellRenderer extends DefaultTreeCellRenderer {
     @Override
-    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
-                                                  boolean leaf, int row, boolean hasFocus) {
-
-        this.label.setText(String.valueOf(value));
+    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
         if (value instanceof ProjectNode) {
-            this.label.setIcon(Icons.get("project"));
+            this.setIcon(Icons.get("project"));
         } else if (value instanceof CategoryNode) {
-            this.label.setIcon(Icons.get("folder"));
+            this.setIcon(Icons.get("folder").setColorFilter(new FlatSVGIcon.ColorFilter(
+                color -> Color.decode("#40b6e0")
+            )));
         } else {
-            this.label.setIcon(Icons.get("unknown"));
+            this.setIcon(Icons.get("unknown"));
         }
 
-        if (selected) {
-            this.label.setForeground(Color.WHITE);
+        if (selected && hasFocus) {
+            this.setForeground(Color.WHITE);
         } else {
-            this.label.setForeground(Color.BLACK);
+            this.setForeground(Color.BLACK);
         }
 
-        return this.label;
+        this.setPreferredSize(new Dimension(tree.getSize().width, 20));
+
+        return c;
     }
 }
