@@ -18,6 +18,7 @@
 
 package me.theentropyshard.modmaker.gui.controller;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import me.theentropyshard.modmaker.gui.project.ProjectTree;
 import me.theentropyshard.modmaker.gui.view.*;
 import me.theentropyshard.modmaker.utils.SwingUtils;
@@ -27,6 +28,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.function.IntConsumer;
 
 public class MainViewController {
     private final MainView mainView;
@@ -34,7 +36,12 @@ public class MainViewController {
 
     public MainViewController() {
         this.mainView = new MainView();
+
         this.tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        this.tabbedPane.putClientProperty(FlatClientProperties.TABBED_PANE_TAB_CLOSABLE, Boolean.TRUE);
+        this.tabbedPane.putClientProperty(FlatClientProperties.TABBED_PANE_TAB_CLOSE_CALLBACK, (IntConsumer) value -> {
+            this.tabbedPane.removeTabAt(value);
+        });
 
         ProjectView projectView = new ProjectView(new Dimension(1280, 720));
 
@@ -48,12 +55,10 @@ public class MainViewController {
 
                 if (s.equals("Blocks")) {
                     String blockName = String.valueOf(treeNode.getUserObject());
-                    int index = tabbedPane.indexOfTab(blockName);
-                    BlockEditView blockEditView = (BlockEditView) tabbedPane.getComponentAt(index);
+                    int index = MainViewController.this.tabbedPane.indexOfTab(blockName);
                 } else if (s.equals("Items")) {
                     String itemName = String.valueOf(treeNode.getUserObject());
-                    int index = tabbedPane.indexOfTab(itemName);
-                    ItemEditView itemEditView = (ItemEditView) tabbedPane.getComponentAt(index);
+                    int index = MainViewController.this.tabbedPane.indexOfTab(itemName);
                 }
             }
 
@@ -68,7 +73,7 @@ public class MainViewController {
                     createBlockItem.addActionListener(e -> {
                         String name = "Block " + Math.random();
                         BlockEditView component = new BlockEditView();
-                        tabbedPane.addTab(name, component);
+                        MainViewController.this.tabbedPane.addTab(name, component);
                         treeNode.add(new DefaultMutableTreeNode(name));
                         ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(treeNode);
                     });
@@ -79,7 +84,7 @@ public class MainViewController {
                     createBlockItem.addActionListener(e -> {
                         String name = "Item " + Math.random();
                         ItemEditView component = new ItemEditView(name);
-                        tabbedPane.add(name, component);
+                        MainViewController.this.tabbedPane.add(name, component);
                         treeNode.add(new DefaultMutableTreeNode(name));
                         ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(treeNode);
                     });
