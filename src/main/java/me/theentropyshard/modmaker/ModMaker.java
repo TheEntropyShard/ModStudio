@@ -36,8 +36,6 @@ public class ModMaker {
         this.projectsDir = this.workDir.resolve("projects");
 
         this.projectManager = new ProjectManager(this.projectsDir);
-
-
     }
 
     private static ModMaker instance;

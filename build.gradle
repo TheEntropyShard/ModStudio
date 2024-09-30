@@ -36,6 +36,7 @@ repositories {
 }
 
 ext {
+    miglayout = '5.3'
     flatlaf = '3.4.1'
     gson = '2.11.0'
     zip4j = '2.11.5'
@@ -47,7 +48,7 @@ ext {
 }
 
 dependencies {
-    implementation 'com.miglayout:miglayout-swing:5.3'
+    implementation "com.miglayout:miglayout-swing:$miglayout"
     implementation "com.formdev:flatlaf:$flatlaf"
     implementation "com.formdev:flatlaf-extras:$flatlaf"
     implementation "com.google.code.gson:gson:$gson"
@@ -63,8 +64,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 application {
