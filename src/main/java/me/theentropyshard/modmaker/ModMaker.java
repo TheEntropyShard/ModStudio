@@ -18,6 +18,8 @@
 
 package me.theentropyshard.modmaker;
 
+import me.theentropyshard.modmaker.gui.AppFrame;
+import me.theentropyshard.modmaker.gui.Gui;
 import me.theentropyshard.modmaker.project.ProjectManager;
 import me.theentropyshard.modmaker.utils.FileUtils;
 
@@ -31,6 +33,8 @@ public class ModMaker {
     private final Path projectsDir;
 
     private final ProjectManager projectManager;
+
+    private final AppFrame appFrame;
 
     private boolean shutdown;
 
@@ -69,6 +73,11 @@ public class ModMaker {
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+
+        Gui gui = new Gui();
+        this.appFrame = gui.getAppFrame();
+
+        gui.show();
     }
 
     private void createDirectories() throws IOException {
@@ -110,5 +119,9 @@ public class ModMaker {
 
     public ProjectManager getProjectManager() {
         return this.projectManager;
+    }
+
+    public AppFrame getAppFrame() {
+        return this.appFrame;
     }
 }

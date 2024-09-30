@@ -20,11 +20,19 @@ package me.theentropyshard.modmaker.utils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +53,71 @@ public final class SwingUtils {
         SwingUtils.ICON_CACHE.put(path, icon);
 
         return icon;
+    }
+
+    /**
+     * <a href="https://stackoverflow.com/a/27190162/19857533">https://stackoverflow.com/a/27190162/19857533</a>
+     *
+     * Installs a listener to receive notification when the text of any
+     * {@code JTextComponent} is changed. Internally, it installs a
+     * {@link DocumentListener} on the text component's {@link Document},
+     * and a {@link PropertyChangeListener} on the text component to detect
+     * if the {@code Document} itself is replaced.
+     *
+     * @param text           any text component, such as a {@link JTextField}
+     *                       or {@link JTextArea}
+     * @param changeListener a listener to receieve {@link ChangeEvent}s
+     *                       when the text is changed; the source object for the events
+     *                       will be the text component
+     * @throws NullPointerException if either parameter is null
+     */
+    public static void addChangeListener(JTextComponent text, ChangeListener changeListener) {
+        DocumentListener documentListener = new DocumentListener() {
+            private int lastChange = 0;
+            private int lastNotifiedChange = 0;
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                this.changedUpdate(e);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                this.changedUpdate(e);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                this.lastChange++;
+                SwingUtilities.invokeLater(() -> {
+                    if (this.lastNotifiedChange != this.lastChange) {
+                        this.lastNotifiedChange = this.lastChange;
+                        changeListener.stateChanged(new ChangeEvent(text));
+                    }
+                });
+            }
+        };
+        text.addPropertyChangeListener("document", (PropertyChangeEvent e) -> {
+            Document d1 = (Document) e.getOldValue();
+
+            if (d1 != null) {
+                d1.removeDocumentListener(documentListener);
+            }
+
+            Document d2 = (Document) e.getNewValue();
+
+            if (d2 != null) {
+                d2.addDocumentListener(documentListener);
+            }
+
+            documentListener.changedUpdate(null);
+        });
+
+        Document d = text.getDocument();
+
+        if (d != null) {
+            d.addDocumentListener(documentListener);
+        }
     }
 
     public static BufferedImage loadImageFromBase64(String base64) {
@@ -85,8 +158,8 @@ public final class SwingUtils {
 
         Rectangle bounds = allDevices[screen].getDefaultConfiguration().getBounds();
         window.setLocation(
-                ((bounds.width - window.getWidth()) / 2) + bounds.x,
-                ((bounds.height - window.getHeight()) / 2) + bounds.y
+            ((bounds.width - window.getWidth()) / 2) + bounds.x,
+            ((bounds.height - window.getHeight()) / 2) + bounds.y
         );
     }
 
