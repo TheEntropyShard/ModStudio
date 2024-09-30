@@ -18,9 +18,11 @@
 
 package me.theentropyshard.modmaker.gui.controller;
 
+import me.theentropyshard.modmaker.ModMaker;
 import me.theentropyshard.modmaker.gui.AppFrame;
 import me.theentropyshard.modmaker.gui.project.ProjectCreationView;
 import me.theentropyshard.modmaker.gui.view.MainView;
+import me.theentropyshard.modmaker.utils.Worker;
 
 public class MainController {
     public MainController(AppFrame appFrame, MainView mainView) {
@@ -30,10 +32,19 @@ public class MainController {
     private void onCreateNewProject() {
         ProjectCreationView view = ProjectCreationView.showDialog();
 
-        view.getProjectInfo().ifPresentOrElse(info -> {
-            System.out.println(info.getName());
-            System.out.println(info.getNamespace());
-            System.out.println(info.getVersion());
-        }, () -> System.out.println("Cancelled"));
+        view.getProjectInfo().ifPresent(info -> {
+            String name = info.getName();
+            String namespace = info.getNamespace();
+            String version = info.getVersion();
+
+            new Worker<Void, Void>("creating project") {
+                @Override
+                protected Void work() throws Exception {
+                    ModMaker.getInstance().getProjectManager().createProject(name, namespace, version);
+
+                    return null;
+                }
+            }.execute();
+        });
     }
 }
