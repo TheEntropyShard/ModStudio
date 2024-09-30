@@ -24,6 +24,7 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.Optional;
 
 public class ProjectCreationView extends JPanel {
@@ -64,19 +65,25 @@ public class ProjectCreationView extends JPanel {
         private final JTextField versionField;
 
         public ProjectInfoForm() {
-            super(new MigLayout("fillx", "[][]", "[top][top][top]"));
+            super(new MigLayout("fillx", "[][]", "[top][top][top][top]"));
 
             JLabel nameLabel = new JLabel("Name:");
             this.add(nameLabel);
 
-            this.nameField = new JTextField();
+            this.nameField = new JTextField("untitled");
+            this.nameField.selectAll();
             this.add(this.nameField, "wrap, growx, pushx");
 
             JLabel namespaceLabel = new JLabel("Namespace:");
             this.add(namespaceLabel);
 
-            this.namespaceField = new JTextField();
+            this.namespaceField = new JTextField("untitled");
             this.add(this.namespaceField, "wrap, growx, pushx");
+
+            LocationField locationField = new LocationField();
+            locationField.getPathField().setText(ModMaker.getInstance().getProjectsDir().toString());
+            locationField.getLocationLabel().setText("Project will be created in: " +
+                ModMaker.getInstance().getProjectsDir() + File.separator + this.nameField.getText());
 
             SwingUtils.addChangeListener(this.nameField, e -> {
                 this.namespaceField.setText(
@@ -84,6 +91,9 @@ public class ProjectCreationView extends JPanel {
                         .toLowerCase()
                         .replace(" ", "")
                 );
+
+                locationField.getLocationLabel().setText("Project will be created in: " +
+                    ModMaker.getInstance().getProjectsDir() + File.separator + this.nameField.getText());
             });
 
             JLabel versionLabel = new JLabel("Version:");
@@ -91,6 +101,9 @@ public class ProjectCreationView extends JPanel {
 
             this.versionField = new JTextField("0.0.1");
             this.add(this.versionField, "wrap, growx, pushx");
+
+            this.add(new JLabel("Location:"));
+            this.add(locationField, "wrap, growx, pushx");
         }
 
         public JTextField getNameField() {
@@ -103,6 +116,29 @@ public class ProjectCreationView extends JPanel {
 
         public JTextField getVersionField() {
             return this.versionField;
+        }
+    }
+
+    private static final class LocationField extends JPanel {
+        private final JTextField pathField;
+        private final JLabel locationLabel;
+
+        public LocationField() {
+            super(new MigLayout("fill, insets 0", "[]", "[][]"));
+
+            this.pathField = new JTextField();
+            this.add(this.pathField, "wrap, growx, pushx");
+
+            this.locationLabel = new JLabel();
+            this.add(this.locationLabel);
+        }
+
+        public JTextField getPathField() {
+            return this.pathField;
+        }
+
+        public JLabel getLocationLabel() {
+            return this.locationLabel;
         }
     }
 
