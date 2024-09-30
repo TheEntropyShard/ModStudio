@@ -20,6 +20,8 @@ package me.theentropyshard.modmaker;
 
 public class Main {
     public static void main(String[] args) {
-        new ModMaker();
+        Args theArgs = Args.parse(args);
+
+        new ModMaker (theArgs, theArgs.getWorkDir());
     }
 }

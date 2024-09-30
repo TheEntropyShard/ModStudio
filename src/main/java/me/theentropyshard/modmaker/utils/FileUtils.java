@@ -45,6 +45,14 @@ public final class FileUtils {
         }
     };
 
+    public static boolean isEmpty(Path path) throws IOException {
+        if (Files.isDirectory(path)) {
+            return FileUtils.countFiles(path) == 0;
+        } else {
+            return Files.size(path) == 0L;
+        }
+    }
+
     public static int countFiles(Path dir) throws IOException {
         if (!Files.isDirectory(dir)) {
             throw new IOException(dir + " expected to be a directory");

@@ -19,29 +19,85 @@
 package me.theentropyshard.modmaker;
 
 import me.theentropyshard.modmaker.project.ProjectManager;
+import me.theentropyshard.modmaker.utils.FileUtils;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ModMaker {
+    private final Args args;
+
     private final Path workDir;
     private final Path projectsDir;
 
     private final ProjectManager projectManager;
 
-    public ModMaker() {
-        instance = this;
+    private boolean shutdown;
 
-        this.workDir = Paths.get(System.getProperty("user.dir"));
+    public ModMaker(Args args, Path workDir) {
+        ModMaker.instance = this;
+
+        if (args.hasUnknownOptions()) {
+            System.out.println("[WARN]: Unknown options: " + args.getUnknownOptions());
+        }
+
+        this.args = args;
+
+        this.workDir = workDir;
         this.projectsDir = this.workDir.resolve("projects");
 
+        try {
+            this.createDirectories();
+        } catch (IOException e) {
+            System.err.println("Could not create ModMaker directories");
+
+            e.printStackTrace();
+
+            System.exit(1);
+        }
+
         this.projectManager = new ProjectManager(this.projectsDir);
+
+        try {
+            this.projectManager.load();
+        } catch (IOException e) {
+            System.err.println("Could not load projects");
+
+            e.printStackTrace();
+
+            System.exit(1);
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+    }
+
+    private void createDirectories() throws IOException {
+        FileUtils.createDirectoryIfNotExists(this.workDir);
+        FileUtils.createDirectoryIfNotExists(this.projectsDir);
+    }
+
+    public synchronized void shutdown() {
+        if (this.shutdown) {
+            return;
+        }
+
+        try {
+            this.projectManager.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.shutdown = true;
     }
 
     private static ModMaker instance;
 
     public static ModMaker getInstance() {
-        return instance;
+        return ModMaker.instance;
+    }
+
+    public Args getArgs() {
+        return this.args;
     }
 
     public Path getWorkDir() {

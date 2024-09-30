@@ -19,7 +19,6 @@
 package me.theentropyshard.modmaker.project;
 
 import me.theentropyshard.modmaker.utils.FileUtils;
-import me.theentropyshard.modmaker.utils.Json;
 import me.theentropyshard.modmaker.utils.ListUtils;
 
 import java.io.IOException;
@@ -29,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectManager {
+    public static final String PROJECT_FILE_NAME = "project.json";
+
     private final Path workDir;
 
     private final List<Project> projects;
@@ -45,28 +46,28 @@ public class ProjectManager {
                 continue;
             }
 
-            Path projectFile = projectDir.resolve("project.json");
-            Project project = Json.parse(FileUtils.readUtf8(projectFile), Project.class);
-
-            project.setWorkDir(projectDir);
-
-            this.projects.add(project);
+            this.loadProject(projectDir);
         }
     }
 
-    public void createProject(String name, String namespace, String version) throws IOException {
-        Project project = new Project();
-        project.setName(name);
-        project.setNamespace(namespace);
-        project.setVersion(version);
+    public void loadProject(Path projectDir) throws IOException {
+        Project project = Project.load(projectDir);
 
-        Path projectDir = this.workDir.resolve(name);
-        FileUtils.createDirectoryIfNotExists(projectDir);
+        if (project == null) {
+            return;
+        }
 
-        project.setWorkDir(projectDir);
+        this.projects.add(project);
+    }
 
-        Path projectFile = projectDir.resolve("project.json");
-        FileUtils.writeUtf8(projectFile, Json.write(project));
+    public void save() throws IOException {
+        for (Project project : this.projects) {
+            project.save();
+        }
+    }
+
+    public Project createProject(String name, String namespace, String version) throws IOException {
+        return Project.create(this.workDir, name, namespace, version);
     }
 
     public Project getProject(String name) {

@@ -18,6 +18,11 @@
 
 package me.theentropyshard.modmaker.project;
 
+import me.theentropyshard.modmaker.utils.FileUtils;
+import me.theentropyshard.modmaker.utils.Json;
+
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Project {
@@ -29,6 +34,44 @@ public class Project {
 
     public Project() {
 
+    }
+
+    public static Project create(Path workDir, String name, String namespace, String version) throws IOException {
+        Project project = new Project();
+        project.setName(name);
+        project.setNamespace(namespace);
+        project.setVersion(version);
+
+        Path projectDir = workDir.resolve(name);
+        project.setWorkDir(projectDir);
+
+        FileUtils.createDirectoryIfNotExists(projectDir);
+
+        Path projectFile = projectDir.resolve(ProjectManager.PROJECT_FILE_NAME);
+        FileUtils.writeUtf8(projectFile, Json.write(project));
+
+        return project;
+    }
+
+    public static Project load(Path projectDir) throws IOException {
+        Path projectFile = projectDir.resolve(ProjectManager.PROJECT_FILE_NAME);
+
+        if (!Files.exists(projectFile)) {
+            return null;
+        }
+
+        if (FileUtils.isEmpty(projectFile)) {
+            return null;
+        }
+
+        Project project = Json.parse(FileUtils.readUtf8(projectFile), Project.class);
+        project.setWorkDir(projectDir);
+
+        return project;
+    }
+
+    public void save() throws IOException {
+        FileUtils.writeUtf8(this.workDir.resolve(ProjectManager.PROJECT_FILE_NAME), Json.write(this));
     }
 
     public Path getWorkDir() {

@@ -18,6 +18,7 @@
 
 package me.theentropyshard.modmaker.utils;
 
+import com.google.gson.FormattingStyle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -33,7 +34,9 @@ public final class Json {
         //
         .create();
 
-    private static final Gson PRETTY_GSON = Json.GSON.newBuilder().setPrettyPrinting().create();
+    private static final Gson PRETTY_GSON = Json.GSON.newBuilder()
+        .setFormattingStyle(FormattingStyle.PRETTY.withIndent(" ".repeat(4)))
+        .create();
 
     public static <T> T parse(String json, Type clazz) {
         return Json.GSON.fromJson(json, clazz);
@@ -52,7 +55,9 @@ public final class Json {
     }
 
     public static String write(Object o) {
-        return Json.GSON.toJson(o);
+        //return Json.GSON.toJson(o);
+
+        return Json.PRETTY_GSON.toJson(o);
     }
 
     public static String writePretty(Object o) {
