@@ -16,18 +16,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.gui.project.location;
+package me.theentropyshard.modmaker.gui.view.project.creation.location;
 
 import javax.swing.*;
 import java.io.File;
 import java.nio.file.Path;
 
-public class ProjectLocationTextField extends JTextField {
-    public ProjectLocationTextField(String projectName, Path projectsDir) {
+public class ProjectLocationLabel extends JLabel {
+    public ProjectLocationLabel(String projectName, Path projectsDir) {
         this.updateText(projectName, projectsDir);
     }
 
     public void updateText(String projectName, Path projectsDir) {
-        this.setText(projectsDir + File.separator + projectName);
+        this.setText("Project will be created in: " + projectsDir + File.separator + projectName);
     }
 }

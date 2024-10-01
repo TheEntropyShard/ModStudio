@@ -16,16 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.gui.project;
+package me.theentropyshard.modmaker.gui.view.project;
 
-import javax.swing.*;
+public class ProjectView {
 
-public class ProjectNamespaceField extends JTextField {
-    public ProjectNamespaceField(String text) {
-        this.updateText(text);
-    }
-
-    public void updateText(String text) {
-        this.setText(text.toLowerCase().replace(" ", ""));
-    }
 }

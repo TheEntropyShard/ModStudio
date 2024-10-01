@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.gui.project.location;
+package me.theentropyshard.modmaker.gui.view.project.creation.location;
 
 import net.miginfocom.swing.MigLayout;
 

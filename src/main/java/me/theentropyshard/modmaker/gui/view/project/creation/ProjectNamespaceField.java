@@ -16,28 +16,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.gui.project;
+package me.theentropyshard.modmaker.gui.view.project.creation;
 
-public class ProjectCreationInfo {
-    private final String name;
-    private final String namespace;
-    private final String version;
+import javax.swing.*;
 
-    public ProjectCreationInfo(String name, String namespace, String version) {
-        this.name = name;
-        this.namespace = namespace;
-        this.version = version;
+public class ProjectNamespaceField extends JTextField {
+    public ProjectNamespaceField(String text) {
+        this.updateText(text);
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public String getNamespace() {
-        return this.namespace;
-    }
-
-    public String getVersion() {
-        return this.version;
+    public void updateText(String text) {
+        this.setText(text.toLowerCase().replace(" ", ""));
     }
 }

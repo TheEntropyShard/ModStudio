@@ -20,7 +20,7 @@ package me.theentropyshard.modmaker.gui.controller;
 
 import me.theentropyshard.modmaker.ModMaker;
 import me.theentropyshard.modmaker.gui.AppFrame;
-import me.theentropyshard.modmaker.gui.project.ProjectCreationView;
+import me.theentropyshard.modmaker.gui.view.project.creation.ProjectCreationView;
 import me.theentropyshard.modmaker.gui.view.MainView;
 import me.theentropyshard.modmaker.utils.Worker;
 

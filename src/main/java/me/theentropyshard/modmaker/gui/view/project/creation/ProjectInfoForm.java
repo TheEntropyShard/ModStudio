@@ -16,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.gui.project;
+package me.theentropyshard.modmaker.gui.view.project.creation;
 
 import me.theentropyshard.modmaker.ModMaker;
-import me.theentropyshard.modmaker.gui.project.location.ProjectLocationComponent;
+import me.theentropyshard.modmaker.gui.view.project.creation.location.ProjectLocationComponent;
 import me.theentropyshard.modmaker.utils.SwingUtils;
 import net.miginfocom.swing.MigLayout;
 
