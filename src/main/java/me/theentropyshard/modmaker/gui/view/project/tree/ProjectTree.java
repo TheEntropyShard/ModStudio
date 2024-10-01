@@ -16,17 +16,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.gui.view.project;
+package me.theentropyshard.modmaker.gui.view.project.tree;
+
+import me.theentropyshard.modmaker.project.Project;
 
 import javax.swing.*;
-import java.awt.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
-public class ProjectView extends JPanel {
-    public ProjectView() {
-        super(new BorderLayout());
+public class ProjectTree extends JTree {
+    public ProjectTree(TreeNode node) {
+        super(node);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        this.setShowsRootHandles(true);
+        this.setRootVisible(true);
+    }
 
+    public static ProjectTree create(Project project) {
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(project.getName());
 
+        return new ProjectTree(rootNode);
     }
 }

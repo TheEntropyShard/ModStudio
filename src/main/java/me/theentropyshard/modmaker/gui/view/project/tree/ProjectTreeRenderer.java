@@ -16,17 +16,23 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.gui.view.project;
+package me.theentropyshard.modmaker.gui.view.project.tree;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 
-public class ProjectView extends JPanel {
-    public ProjectView() {
-        super(new BorderLayout());
+public class ProjectTreeRenderer extends DefaultTreeCellRenderer {
+    public ProjectTreeRenderer() {
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+    }
+
+    @Override
+    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        Component c = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
 
+
+        return c;
     }
 }
