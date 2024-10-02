@@ -18,8 +18,6 @@
 
 package me.theentropyshard.modmaker.gui;
 
-import me.theentropyshard.modmaker.gui.controller.MainController;
-import me.theentropyshard.modmaker.gui.view.MainView;
 import me.theentropyshard.modmaker.utils.SwingUtils;
 
 import javax.swing.*;
@@ -39,11 +37,9 @@ public class AppFrame extends JFrame {
         this.openProjectItem = new JMenuItem("Open Project");
         this.openProjectItem.setMnemonic(KeyEvent.VK_O);
 
-        MainView mainView = new MainView();
+        JPanel mainView = new JPanel();
         mainView.setPreferredSize(new Dimension(1280, 720));
         this.add(mainView, BorderLayout.CENTER);
-
-        new MainController(this, mainView);
 
         JMenuBar menuBar = new JMenuBar();
 
