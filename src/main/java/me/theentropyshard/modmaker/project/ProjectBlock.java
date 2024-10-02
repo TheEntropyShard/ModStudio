@@ -16,26 +16,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.gui.view;
+package me.theentropyshard.modmaker.project;
 
-import me.theentropyshard.modmaker.gui.view.project.ProjectView;
+import me.theentropyshard.modmaker.cosmic.block.Block;
 
-import javax.swing.*;
-import java.awt.*;
+public class ProjectBlock {
+    private Block block;
 
-public class MainView extends JPanel {
-    private ProjectView projectView;
-
-    public MainView() {
-        super(new BorderLayout());
+    public ProjectBlock(Block block) {
+        this.block = block;
     }
 
-    public void setProjectView(ProjectView projectView) {
-        if (this.projectView != null) {
-            this.remove(this.projectView);
-        }
-
-        this.projectView = projectView;
-        this.add(projectView, BorderLayout.CENTER);
+    public Block getBlock() {
+        return this.block;
     }
 }

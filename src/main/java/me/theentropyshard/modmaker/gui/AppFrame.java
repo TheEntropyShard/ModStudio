@@ -28,12 +28,16 @@ import java.awt.event.KeyEvent;
 
 public class AppFrame extends JFrame {
     private final JMenuItem newProjectItem;
+    private final JMenuItem openProjectItem;
 
     public AppFrame() {
         super("ModMaker");
 
         this.newProjectItem = new JMenuItem("New Project");
         this.newProjectItem.setMnemonic(KeyEvent.VK_N);
+
+        this.openProjectItem = new JMenuItem("Open Project");
+        this.openProjectItem.setMnemonic(KeyEvent.VK_O);
 
         MainView mainView = new MainView();
         mainView.setPreferredSize(new Dimension(1280, 720));
@@ -45,7 +49,10 @@ public class AppFrame extends JFrame {
 
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
+
         fileMenu.add(this.newProjectItem);
+        fileMenu.add(this.openProjectItem);
+
         menuBar.add(fileMenu);
 
         this.setJMenuBar(menuBar);
@@ -57,5 +64,9 @@ public class AppFrame extends JFrame {
 
     public JMenuItem getNewProjectItem() {
         return this.newProjectItem;
+    }
+
+    public JMenuItem getOpenProjectItem() {
+        return this.openProjectItem;
     }
 }

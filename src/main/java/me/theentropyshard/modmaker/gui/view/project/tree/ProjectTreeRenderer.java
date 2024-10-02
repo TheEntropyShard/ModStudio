@@ -18,11 +18,18 @@
 
 package me.theentropyshard.modmaker.gui.view.project.tree;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+import me.theentropyshard.modmaker.gui.Icons;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 
 public class ProjectTreeRenderer extends DefaultTreeCellRenderer {
+    private static final Icon PROJECT = Icons.get("project");
+    private static final Icon CYAN_FOLDER = Icons.get("folder").setColorFilter(new FlatSVGIcon.ColorFilter(color -> Color.decode("#40b6e0")));
+    private static final Icon JSON = Icons.get("json");
+
     public ProjectTreeRenderer() {
 
     }
@@ -31,7 +38,15 @@ public class ProjectTreeRenderer extends DefaultTreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         Component c = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
+        if (value instanceof ProjectTreeNode projectNode) {
+            this.setText(projectNode.getText());
 
+            switch (projectNode.getType()) {
+                case PROJECT -> this.setIcon(ProjectTreeRenderer.PROJECT);
+                case CATEGORY -> this.setIcon(ProjectTreeRenderer.CYAN_FOLDER);
+                case FILE -> this.setIcon(ProjectTreeRenderer.JSON);
+            }
+        }
 
         return c;
     }

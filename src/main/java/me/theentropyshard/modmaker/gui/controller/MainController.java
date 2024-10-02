@@ -20,13 +20,25 @@ package me.theentropyshard.modmaker.gui.controller;
 
 import me.theentropyshard.modmaker.ModMaker;
 import me.theentropyshard.modmaker.gui.AppFrame;
-import me.theentropyshard.modmaker.gui.view.project.creation.ProjectCreationView;
 import me.theentropyshard.modmaker.gui.view.MainView;
+import me.theentropyshard.modmaker.gui.view.project.creation.ProjectCreationView;
+import me.theentropyshard.modmaker.project.Project;
 import me.theentropyshard.modmaker.utils.Worker;
 
+import java.util.concurrent.ExecutionException;
+
 public class MainController {
+    private final MainView mainView;
+
+    private ProjectController projectController;
+
     public MainController(AppFrame appFrame, MainView mainView) {
+        this.mainView = mainView;
+
         appFrame.getNewProjectItem().addActionListener(e -> this.onCreateNewProject());
+        appFrame.getOpenProjectItem().addActionListener(e -> {
+            System.out.println("open");
+        });
     }
 
     private void onCreateNewProject() {
@@ -37,14 +49,40 @@ public class MainController {
             String namespace = info.getNamespace();
             String version = info.getVersion();
 
-            new Worker<Void, Void>("creating project") {
+            new Worker<Project, Void>("creating project " + name) {
                 @Override
-                protected Void work() throws Exception {
-                    ModMaker.getInstance().getProjectManager().createProject(name, namespace, version);
+                protected Project work() throws Exception {
+                    Project project = ModMaker.getInstance().getProjectManager().createProject(name, namespace, version);
 
-                    return null;
+                    project.loadWorkspace();
+
+                    return project;
+                }
+
+                @Override
+                protected void done() {
+                    Project project;
+
+                    try {
+                        project = this.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+
+                        return;
+                    }
+
+                    MainController.this.openProject(project);
                 }
             }.execute();
         });
+    }
+
+    public void openProject(Project project) {
+        if (this.projectController == null) {
+            this.projectController = new ProjectController();
+        }
+
+        this.mainView.setProjectView(this.projectController.openProject(project));
+        this.mainView.revalidate();
     }
 }

@@ -16,26 +16,32 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.gui.view;
+package me.theentropyshard.modmaker.gui.view.project.tree;
 
-import me.theentropyshard.modmaker.gui.view.project.ProjectView;
+import javax.swing.tree.DefaultMutableTreeNode;
 
-import javax.swing.*;
-import java.awt.*;
+public class ProjectTreeNode extends DefaultMutableTreeNode {
+    private final Type type;
+    private final String text;
 
-public class MainView extends JPanel {
-    private ProjectView projectView;
+    public ProjectTreeNode(String text, Type type) {
+        super(text);
 
-    public MainView() {
-        super(new BorderLayout());
+        this.type = type;
+        this.text = text;
     }
 
-    public void setProjectView(ProjectView projectView) {
-        if (this.projectView != null) {
-            this.remove(this.projectView);
-        }
+    public Type getType() {
+        return this.type;
+    }
 
-        this.projectView = projectView;
-        this.add(projectView, BorderLayout.CENTER);
+    public String getText() {
+        return this.text;
+    }
+
+    public enum Type {
+        PROJECT,
+        CATEGORY,
+        FILE
     }
 }

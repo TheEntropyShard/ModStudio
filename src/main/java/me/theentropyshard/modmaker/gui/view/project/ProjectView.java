@@ -18,15 +18,26 @@
 
 package me.theentropyshard.modmaker.gui.view.project;
 
+import me.theentropyshard.modmaker.gui.view.project.tree.ProjectTree;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class ProjectView extends JPanel {
+    private final JSplitPane splitPane;
+
     public ProjectView() {
         super(new BorderLayout());
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        this.splitPane.setRightComponent(new JPanel());
 
+        this.add(this.splitPane, BorderLayout.CENTER);
+    }
 
+    public void setProjectTree(ProjectTree projectTree) {
+        JScrollPane scrollPane = new JScrollPane(projectTree);
+        this.splitPane.setLeftComponent(scrollPane);
+        this.splitPane.revalidate();
     }
 }

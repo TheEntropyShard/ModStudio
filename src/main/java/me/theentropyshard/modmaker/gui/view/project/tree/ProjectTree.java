@@ -21,7 +21,6 @@ package me.theentropyshard.modmaker.gui.view.project.tree;
 import me.theentropyshard.modmaker.project.Project;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 public class ProjectTree extends JTree {
@@ -30,10 +29,18 @@ public class ProjectTree extends JTree {
 
         this.setShowsRootHandles(true);
         this.setRootVisible(true);
+        this.setCellRenderer(new ProjectTreeRenderer());
     }
 
     public static ProjectTree create(Project project) {
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(project.getName());
+        ProjectTreeNode rootNode = new ProjectTreeNode("Project", ProjectTreeNode.Type.PROJECT);
+
+        ProjectTreeNode blocksNode = new ProjectTreeNode("Blocks", ProjectTreeNode.Type.CATEGORY);
+        blocksNode.add(new ProjectTreeNode("Apple", ProjectTreeNode.Type.FILE));
+        rootNode.add(blocksNode);
+
+        ProjectTreeNode itemsNode = new ProjectTreeNode("Items", ProjectTreeNode.Type.CATEGORY);
+        rootNode.add(itemsNode);
 
         return new ProjectTree(rootNode);
     }

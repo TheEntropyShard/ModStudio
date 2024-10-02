@@ -18,17 +18,22 @@
 
 package me.theentropyshard.modmaker.project;
 
+import me.theentropyshard.modmaker.cosmic.block.Block;
 import me.theentropyshard.modmaker.utils.FileUtils;
 import me.theentropyshard.modmaker.utils.Json;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Project {
     private String name;
     private String namespace;
     private String version;
+
+    private transient List<ProjectBlock> blocks;
 
     private transient Path workDir;
 
@@ -72,6 +77,26 @@ public class Project {
 
     public void save() throws IOException {
         FileUtils.writeUtf8(this.workDir.resolve(ProjectManager.PROJECT_FILE_NAME), Json.write(this));
+    }
+
+    public void loadWorkspace() throws IOException {
+        this.blocks = new ArrayList<>();
+
+        Path blocksDir = this.workDir.resolve("blocks");
+
+        if (!Files.exists(blocksDir) || !Files.isDirectory(blocksDir)) {
+            return;
+        }
+
+        for (Path blockJsonFile : FileUtils.list(blocksDir)) {
+            String blockJson = FileUtils.readUtf8(blockJsonFile);
+
+            this.blocks.add(new ProjectBlock(Json.parse(blockJson, Block.class)));
+        }
+    }
+
+    public List<ProjectBlock> getBlocks() {
+        return this.blocks;
     }
 
     public Path getWorkDir() {
