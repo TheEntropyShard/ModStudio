@@ -18,6 +18,7 @@
 
 package me.theentropyshard.modmaker.gui;
 
+import me.theentropyshard.modmaker.gui.project.ProjectTree;
 import me.theentropyshard.modmaker.utils.SwingUtils;
 
 import javax.swing.*;
@@ -37,7 +38,9 @@ public class AppFrame extends JFrame {
         this.openProjectItem = new JMenuItem("Open Project");
         this.openProjectItem.setMnemonic(KeyEvent.VK_O);
 
-        JPanel mainView = new JPanel();
+        JPanel mainView = new JPanel(new BorderLayout());
+        mainView.add(new ProjectTree("BaseGame"));
+
         mainView.setPreferredSize(new Dimension(1280, 720));
         this.add(mainView, BorderLayout.CENTER);
 
