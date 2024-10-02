@@ -41,6 +41,7 @@ public class Gui {
 
         FlatIntelliJLaf.setup();
 
+        UIManager.put("SplitPaneDivider.style", "plain");
         UIManager.getDefaults().put("Button.showMnemonics", true);
         UIManager.getDefaults().put("Component.hideMnemonics", false);
     }

@@ -18,30 +18,73 @@
 
 package me.theentropyshard.modmaker.gui.view.project.tree;
 
-import me.theentropyshard.modmaker.project.Project;
+import me.theentropyshard.modmaker.utils.MouseClickListener;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.event.MouseEvent;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class ProjectTree extends JTree {
+    private final Set<ProjectTreeListener> listeners;
+
     public ProjectTree(TreeNode node) {
         super(node);
 
+        this.listeners = new LinkedHashSet<>();
+
         this.setShowsRootHandles(true);
         this.setRootVisible(true);
+        this.setRowHeight(20);
         this.setCellRenderer(new ProjectTreeRenderer());
+
+        this.addMouseListener(new MouseClickListener(e -> {
+            TreePath path = this.getPathForLocation(e.getX(), e.getY());
+            this.setSelectionPath(path);
+            path = this.getSelectionPath();
+
+            if (path == null) {
+                return;
+            }
+
+            DefaultMutableTreeNode pathComponent = (DefaultMutableTreeNode) path.getLastPathComponent();
+
+            for (ProjectTreeListener listener : this.listeners) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+                    listener.leftDoubleClick(pathComponent, e);
+                } else if (SwingUtilities.isRightMouseButton(e)) {
+                    listener.rightClick(pathComponent, e);
+                }
+            }
+        }));
     }
 
-    public static ProjectTree create(Project project) {
-        ProjectTreeNode rootNode = new ProjectTreeNode("Project", ProjectTreeNode.Type.PROJECT);
+    public void addListener(ProjectTreeListener listener) {
+        this.listeners.add(listener);
+    }
 
-        ProjectTreeNode blocksNode = new ProjectTreeNode("Blocks", ProjectTreeNode.Type.CATEGORY);
-        blocksNode.add(new ProjectTreeNode("Apple", ProjectTreeNode.Type.FILE));
-        rootNode.add(blocksNode);
+    public interface ProjectTreeListener {
+        void leftDoubleClick(DefaultMutableTreeNode treeNode, MouseEvent event);
 
-        ProjectTreeNode itemsNode = new ProjectTreeNode("Items", ProjectTreeNode.Type.CATEGORY);
-        rootNode.add(itemsNode);
+        void rightClick(DefaultMutableTreeNode treeNode, MouseEvent event);
+    }
 
-        return new ProjectTree(rootNode);
+    public static abstract class ProjectTreeListenerAdapter implements ProjectTreeListener {
+        public ProjectTreeListenerAdapter() {
+
+        }
+
+        @Override
+        public void leftDoubleClick(DefaultMutableTreeNode treeNode, MouseEvent event) {
+
+        }
+
+        @Override
+        public void rightClick(DefaultMutableTreeNode treeNode, MouseEvent event) {
+
+        }
     }
 }

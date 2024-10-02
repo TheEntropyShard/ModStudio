@@ -25,6 +25,10 @@ import me.theentropyshard.modmaker.project.Project;
 import me.theentropyshard.modmaker.project.ProjectBlock;
 import me.theentropyshard.modmaker.utils.Worker;
 
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ProjectController {
@@ -70,7 +74,39 @@ public class ProjectController {
             protected void done() {
                 this.rootNode.add(this.blocksNode);
 
-                ProjectController.this.projectView.setProjectTree(new ProjectTree(this.rootNode));
+                ProjectTree projectTree = new ProjectTree(this.rootNode);
+                projectTree.addListener(new ProjectTree.ProjectTreeListener() {
+                    @Override
+                    public void leftDoubleClick(DefaultMutableTreeNode treeNode, MouseEvent event) {
+
+                    }
+
+                    @Override
+                    public void rightClick(DefaultMutableTreeNode treeNode, MouseEvent event) {
+                        JPopupMenu popupMenu = new JPopupMenu();
+
+                        String s = String.valueOf(treeNode.getUserObject());
+
+                        if (s.equals("Blocks")) {
+                            JMenuItem createBlockItem = new JMenuItem("Create Block");
+                            createBlockItem.addActionListener(e -> {
+
+                            });
+
+                            popupMenu.add(createBlockItem);
+                        } else if (s.equals("Items")) {
+                            JMenuItem createBlockItem = new JMenuItem("Create Item");
+                            createBlockItem.addActionListener(e -> {
+
+                            });
+
+                            popupMenu.add(createBlockItem);
+                        }
+
+                        popupMenu.show(projectTree, event.getX(), event.getY());
+                    }
+                });
+                ProjectController.this.projectView.setProjectTree(projectTree);
             }
         }.execute();
 
