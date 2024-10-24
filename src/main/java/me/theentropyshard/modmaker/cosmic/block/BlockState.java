@@ -23,27 +23,31 @@ import me.theentropyshard.modmaker.cosmic.block.model.CanPlace;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * All fields here are using wrappers for primitive types, because GSON can exclude null fields from serialization,
+ * which makes it very easy to generate only needed data.
+ */
 public class BlockState {
     private String langKey;
     private String modelName;
     private String swapGroupId;
     private String blockEventsId;
     private String dropId;
-    private boolean allowSwapping = true;
-    private boolean isOpaque = true;
-    private boolean canRaycastForBreak = true;
-    private boolean canRaycastForPlaceOn = true;
-    private boolean canRaycastForReplace;
-    private boolean catalogHidden;
-    private boolean walkThrough;
-    private boolean isFluid;
-    private int lightAttenuation;
-    private int lightLevelRed;
-    private int lightLevelGreen;
-    private int lightLevelBlue;
-    private int rotXZ;
-    private float hardness;
-    private float blastResistance;
+    private Boolean allowSwapping = true;
+    private Boolean isOpaque = true;
+    private Boolean canRaycastForBreak = true;
+    private Boolean canRaycastForPlaceOn = true;
+    private Boolean canRaycastForReplace;
+    private Boolean catalogHidden;
+    private Boolean walkThrough;
+    private Boolean isFluid;
+    private Integer lightAttenuation = 15;
+    private Integer lightLevelRed;
+    private Integer lightLevelGreen;
+    private Integer lightLevelBlue;
+    private Integer rotXZ;
+    private Float hardness = 1.5F;
+    private Float blastResistance = 100.0F;
     private List<String> stateGenerators;
     private List<String> tags;
     private Map<String, Object> dropParams;
@@ -94,123 +98,123 @@ public class BlockState {
         this.dropId = dropId;
     }
 
-    public boolean isAllowSwapping() {
+    public Boolean getAllowSwapping() {
         return this.allowSwapping;
     }
 
-    public void setAllowSwapping(boolean allowSwapping) {
+    public void setAllowSwapping(Boolean allowSwapping) {
         this.allowSwapping = allowSwapping;
     }
 
-    public boolean isOpaque() {
+    public Boolean getOpaque() {
         return this.isOpaque;
     }
 
-    public void setOpaque(boolean opaque) {
+    public void setOpaque(Boolean opaque) {
         this.isOpaque = opaque;
     }
 
-    public boolean isCanRaycastForBreak() {
+    public Boolean getCanRaycastForBreak() {
         return this.canRaycastForBreak;
     }
 
-    public void setCanRaycastForBreak(boolean canRaycastForBreak) {
+    public void setCanRaycastForBreak(Boolean canRaycastForBreak) {
         this.canRaycastForBreak = canRaycastForBreak;
     }
 
-    public boolean isCanRaycastForPlaceOn() {
+    public Boolean getCanRaycastForPlaceOn() {
         return this.canRaycastForPlaceOn;
     }
 
-    public void setCanRaycastForPlaceOn(boolean canRaycastForPlaceOn) {
+    public void setCanRaycastForPlaceOn(Boolean canRaycastForPlaceOn) {
         this.canRaycastForPlaceOn = canRaycastForPlaceOn;
     }
 
-    public boolean isCanRaycastForReplace() {
+    public Boolean getCanRaycastForReplace() {
         return this.canRaycastForReplace;
     }
 
-    public void setCanRaycastForReplace(boolean canRaycastForReplace) {
+    public void setCanRaycastForReplace(Boolean canRaycastForReplace) {
         this.canRaycastForReplace = canRaycastForReplace;
     }
 
-    public boolean isCatalogHidden() {
+    public Boolean getCatalogHidden() {
         return this.catalogHidden;
     }
 
-    public void setCatalogHidden(boolean catalogHidden) {
+    public void setCatalogHidden(Boolean catalogHidden) {
         this.catalogHidden = catalogHidden;
     }
 
-    public boolean isWalkThrough() {
+    public Boolean getWalkThrough() {
         return this.walkThrough;
     }
 
-    public void setWalkThrough(boolean walkThrough) {
+    public void setWalkThrough(Boolean walkThrough) {
         this.walkThrough = walkThrough;
     }
 
-    public boolean isFluid() {
+    public Boolean getFluid() {
         return this.isFluid;
     }
 
-    public void setFluid(boolean fluid) {
+    public void setFluid(Boolean fluid) {
         this.isFluid = fluid;
     }
 
-    public int getLightAttenuation() {
+    public Integer getLightAttenuation() {
         return this.lightAttenuation;
     }
 
-    public void setLightAttenuation(int lightAttenuation) {
+    public void setLightAttenuation(Integer lightAttenuation) {
         this.lightAttenuation = lightAttenuation;
     }
 
-    public int getLightLevelRed() {
+    public Integer getLightLevelRed() {
         return this.lightLevelRed;
     }
 
-    public void setLightLevelRed(int lightLevelRed) {
+    public void setLightLevelRed(Integer lightLevelRed) {
         this.lightLevelRed = lightLevelRed;
     }
 
-    public int getLightLevelGreen() {
+    public Integer getLightLevelGreen() {
         return this.lightLevelGreen;
     }
 
-    public void setLightLevelGreen(int lightLevelGreen) {
+    public void setLightLevelGreen(Integer lightLevelGreen) {
         this.lightLevelGreen = lightLevelGreen;
     }
 
-    public int getLightLevelBlue() {
+    public Integer getLightLevelBlue() {
         return this.lightLevelBlue;
     }
 
-    public void setLightLevelBlue(int lightLevelBlue) {
+    public void setLightLevelBlue(Integer lightLevelBlue) {
         this.lightLevelBlue = lightLevelBlue;
     }
 
-    public int getRotXZ() {
+    public Integer getRotXZ() {
         return this.rotXZ;
     }
 
-    public void setRotXZ(int rotXZ) {
+    public void setRotXZ(Integer rotXZ) {
         this.rotXZ = rotXZ;
     }
 
-    public float getHardness() {
+    public Float getHardness() {
         return this.hardness;
     }
 
-    public void setHardness(float hardness) {
+    public void setHardness(Float hardness) {
         this.hardness = hardness;
     }
 
-    public float getBlastResistance() {
+    public Float getBlastResistance() {
         return this.blastResistance;
     }
 
-    public void setBlastResistance(float blastResistance) {
+    public void setBlastResistance(Float blastResistance) {
         this.blastResistance = blastResistance;
     }
 
