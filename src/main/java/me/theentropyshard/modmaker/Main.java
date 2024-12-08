@@ -22,6 +22,6 @@ public class Main {
     public static void main(String[] args) {
         Args theArgs = Args.parse(args);
 
-        new ModMaker (theArgs, theArgs.getWorkDir());
+        new ModMaker(theArgs, theArgs.getWorkDir());
     }
 }
