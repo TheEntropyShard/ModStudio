@@ -18,18 +18,28 @@
 
 package me.theentropyshard.modmaker.utils;
 
-import java.io.IOException;
+public class Pair<L, R> {
+    private L left;
+    private R right;
 
-public final class ResourceUtils {
-    public static byte[] readToByteArray(String path) throws IOException {
-        return StreamUtils.readToByteArray(ResourceUtils.class.getResourceAsStream(path));
+    public Pair(L left, R right) {
+        this.left = left;
+        this.right = right;
     }
 
-    public static String readToString(String path) throws IOException {
-        return StreamUtils.readToString(ResourceUtils.class.getResourceAsStream(path));
+    public L getLeft() {
+        return this.left;
     }
 
-    private ResourceUtils() {
-        throw new UnsupportedOperationException();
+    public void setLeft(L left) {
+        this.left = left;
+    }
+
+    public R getRight() {
+        return this.right;
+    }
+
+    public void setRight(R right) {
+        this.right = right;
     }
 }

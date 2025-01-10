@@ -25,7 +25,7 @@ import java.io.IOException;
 public final class FlatLafUtils {
     public static FlatSVGIcon getSvgIcon(String path) {
         try {
-            return new FlatSVGIcon(ResourceUtils.getResource(path));
+            return new FlatSVGIcon(FlatLafUtils.class.getResourceAsStream(path));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -16,20 +16,30 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.utils;
+package me.theentropyshard.modmaker.language;
 
-import java.io.IOException;
+public class DummySection implements LanguageSection {
+    public DummySection() {
 
-public final class ResourceUtils {
-    public static byte[] readToByteArray(String path) throws IOException {
-        return StreamUtils.readToByteArray(ResourceUtils.class.getResourceAsStream(path));
     }
 
-    public static String readToString(String path) throws IOException {
-        return StreamUtils.readToString(ResourceUtils.class.getResourceAsStream(path));
+    @Override
+    public void addString(String key, String value) {
+
     }
 
-    private ResourceUtils() {
-        throw new UnsupportedOperationException();
+    @Override
+    public void addSection(String key, LanguageSection section) {
+
+    }
+
+    @Override
+    public String getString(String key) {
+        return key;
+    }
+
+    @Override
+    public LanguageSection getSection(String key) {
+        return this;
     }
 }

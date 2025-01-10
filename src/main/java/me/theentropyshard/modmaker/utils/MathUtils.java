@@ -18,18 +18,17 @@
 
 package me.theentropyshard.modmaker.utils;
 
-import java.io.IOException;
+public final class MathUtils {
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
 
-public final class ResourceUtils {
-    public static byte[] readToByteArray(String path) throws IOException {
-        return StreamUtils.readToByteArray(ResourceUtils.class.getResourceAsStream(path));
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 
-    public static String readToString(String path) throws IOException {
-        return StreamUtils.readToString(ResourceUtils.class.getResourceAsStream(path));
-    }
-
-    private ResourceUtils() {
+    private MathUtils() {
         throw new UnsupportedOperationException();
     }
 }

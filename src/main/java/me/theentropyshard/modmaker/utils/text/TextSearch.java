@@ -16,20 +16,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.utils;
+package me.theentropyshard.modmaker.utils.text;
 
-import java.io.IOException;
+import me.theentropyshard.modmaker.utils.Pair;
 
-public final class ResourceUtils {
-    public static byte[] readToByteArray(String path) throws IOException {
-        return StreamUtils.readToByteArray(ResourceUtils.class.getResourceAsStream(path));
-    }
+import java.util.List;
 
-    public static String readToString(String path) throws IOException {
-        return StreamUtils.readToString(ResourceUtils.class.getResourceAsStream(path));
-    }
+public interface TextSearch {
+    List<Pair<Integer, Integer>> findOccurrences(String haystack, String needle);
 
-    private ResourceUtils() {
-        throw new UnsupportedOperationException();
+    static TextSearch create() {
+        return new SimpleTextSearch();
     }
 }

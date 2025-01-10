@@ -16,20 +16,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.utils;
+package me.theentropyshard.modmaker.gui.laf;
 
-import java.io.IOException;
+import com.formdev.flatlaf.FlatDarculaLaf;
 
-public final class ResourceUtils {
-    public static byte[] readToByteArray(String path) throws IOException {
-        return StreamUtils.readToByteArray(ResourceUtils.class.getResourceAsStream(path));
+public class DarkModMakerLaf extends FlatDarculaLaf {
+    public static boolean setup() {
+        return setup(new DarkModMakerLaf());
     }
 
-    public static String readToString(String path) throws IOException {
-        return StreamUtils.readToString(ResourceUtils.class.getResourceAsStream(path));
-    }
-
-    private ResourceUtils() {
-        throw new UnsupportedOperationException();
+    @Override
+    public String getName() {
+        return "DarkModMakerLaf";
     }
 }

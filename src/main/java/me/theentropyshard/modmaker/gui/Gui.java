@@ -18,35 +18,47 @@
 
 package me.theentropyshard.modmaker.gui;
 
-import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLaf;
+import me.theentropyshard.modmaker.gui.laf.DarkModMakerLaf;
+import me.theentropyshard.modmaker.gui.laf.LightModMakerLaf;
+import me.theentropyshard.modmaker.gui.utils.SwingUtils;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Gui {
-    private final AppFrame appFrame;
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
+
+    private final JFrame frame;
+
+    private boolean darkTheme = false;
 
     public Gui() {
-        Gui.prepare();
-
-        this.appFrame = new AppFrame();
-    }
-
-    public void show() {
-        this.appFrame.setVisible(true);
-    }
-
-    private static void prepare() {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
 
-        FlatIntelliJLaf.setup();
+        FlatLaf.registerCustomDefaultsSource("themes");
+
+        if (this.darkTheme) {
+            DarkModMakerLaf.setup();
+        } else {
+            LightModMakerLaf.setup();
+        }
 
         UIManager.put("SplitPaneDivider.style", "plain");
-        UIManager.getDefaults().put("Button.showMnemonics", true);
-        UIManager.getDefaults().put("Component.hideMnemonics", false);
+        UIManager.put("Button.showMnemonics", true);
+        UIManager.put("Component.hideMnemonics", false);
+
+        this.frame = new JFrame("ModMaker");
+        this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.frame.getContentPane().setPreferredSize(new Dimension(Gui.WIDTH, Gui.HEIGHT));
+        this.frame.pack();
+
+        SwingUtils.centerWindow(this.frame, 0);
     }
 
-    public AppFrame getAppFrame() {
-        return this.appFrame;
+    public void show() {
+        this.frame.setVisible(true);
     }
 }

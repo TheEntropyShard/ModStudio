@@ -16,20 +16,35 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.utils;
+package me.theentropyshard.modmaker.gui.utils;
 
-import java.io.IOException;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
-public final class ResourceUtils {
-    public static byte[] readToByteArray(String path) throws IOException {
-        return StreamUtils.readToByteArray(ResourceUtils.class.getResourceAsStream(path));
+public class SimpleDocumentListener implements DocumentListener {
+    private final Listener listener;
+
+    public SimpleDocumentListener(Listener listener) {
+        this.listener = listener;
     }
 
-    public static String readToString(String path) throws IOException {
-        return StreamUtils.readToString(ResourceUtils.class.getResourceAsStream(path));
+    public interface Listener {
+        void onChange();
     }
 
-    private ResourceUtils() {
-        throw new UnsupportedOperationException();
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        SwingUtilities.invokeLater(this.listener::onChange);
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        SwingUtilities.invokeLater(this.listener::onChange);
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+
     }
 }

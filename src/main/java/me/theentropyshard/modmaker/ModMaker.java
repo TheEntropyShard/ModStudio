@@ -18,9 +18,7 @@
 
 package me.theentropyshard.modmaker;
 
-import me.theentropyshard.modmaker.gui.AppFrame;
 import me.theentropyshard.modmaker.gui.Gui;
-import me.theentropyshard.modmaker.project.ProjectManager;
 import me.theentropyshard.modmaker.utils.FileUtils;
 
 import java.io.IOException;
@@ -32,9 +30,7 @@ public class ModMaker {
     private final Path workDir;
     private final Path projectsDir;
 
-    private final ProjectManager projectManager;
-
-    private final AppFrame appFrame;
+    private final Gui gui;
 
     private boolean shutdown;
 
@@ -60,24 +56,10 @@ public class ModMaker {
             System.exit(1);
         }
 
-        this.projectManager = new ProjectManager(this.projectsDir);
-
-        try {
-            this.projectManager.load();
-        } catch (IOException e) {
-            System.err.println("Could not load projects");
-
-            e.printStackTrace();
-
-            System.exit(1);
-        }
-
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
-        Gui gui = new Gui();
-        this.appFrame = gui.getAppFrame();
-
-        gui.show();
+        this.gui = new Gui();
+        this.gui.show();
     }
 
     private void createDirectories() throws IOException {
@@ -88,12 +70,6 @@ public class ModMaker {
     public synchronized void shutdown() {
         if (this.shutdown) {
             return;
-        }
-
-        try {
-            this.projectManager.save();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         this.shutdown = true;
@@ -115,13 +91,5 @@ public class ModMaker {
 
     public Path getProjectsDir() {
         return this.projectsDir;
-    }
-
-    public ProjectManager getProjectManager() {
-        return this.projectManager;
-    }
-
-    public AppFrame getAppFrame() {
-        return this.appFrame;
     }
 }

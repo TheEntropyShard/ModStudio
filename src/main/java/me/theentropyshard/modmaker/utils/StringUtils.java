@@ -18,18 +18,30 @@
 
 package me.theentropyshard.modmaker.utils;
 
-import java.io.IOException;
+public final class StringUtils {
+    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
-public final class ResourceUtils {
-    public static byte[] readToByteArray(String path) throws IOException {
-        return StreamUtils.readToByteArray(ResourceUtils.class.getResourceAsStream(path));
+    public static String getRandomString(int length) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            builder.append(StringUtils.ALPHABET.charAt(
+                    (int) (Math.random() * StringUtils.ALPHABET.length())
+            ));
+        }
+
+        return builder.toString();
     }
 
-    public static String readToString(String path) throws IOException {
-        return StreamUtils.readToString(ResourceUtils.class.getResourceAsStream(path));
+    public static String capitalize(String s) {
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 
-    private ResourceUtils() {
+    public static boolean notNullNotEmpty(String s) {
+        return s != null && !s.isEmpty();
+    }
+
+    public StringUtils() {
         throw new UnsupportedOperationException();
     }
 }

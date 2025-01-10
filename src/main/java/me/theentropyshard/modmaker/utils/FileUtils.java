@@ -25,6 +25,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,12 +46,28 @@ public final class FileUtils {
         }
     };
 
-    public static boolean isEmpty(Path path) throws IOException {
-        if (Files.isDirectory(path)) {
-            return FileUtils.countFiles(path) == 0;
-        } else {
-            return Files.size(path) == 0L;
+    public static void renameFile(Path path, String newName) throws IOException {
+        Path parentDir = path.getParent();
+        Path targetPath = parentDir.resolve(newName);
+
+        Files.move(path, targetPath, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public static boolean isPathInvalid(String path) {
+        try {
+            Path file = Paths.get(path).toAbsolutePath();
+
+            if (Files.exists(file)) {
+                return false;
+            }
+
+            FileUtils.createFileIfNotExists(file);
+            FileUtils.delete(file);
+        } catch (InvalidPathException | IOException e) {
+            return true;
         }
+
+        return false;
     }
 
     public static int countFiles(Path dir) throws IOException {
@@ -60,7 +77,7 @@ public final class FileUtils {
 
         AtomicInteger count = new AtomicInteger(0);
 
-        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(dir, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 count.incrementAndGet();
@@ -85,6 +102,16 @@ public final class FileUtils {
             Files.walkFileTree(path, FileUtils.DELETE_VISITOR);
         } else {
             Files.delete(path);
+        }
+    }
+
+    public static void copyDirectory(Path src, Path dest) throws IOException {
+        List<Path> walked = FileUtils.walk(src);
+
+        FileUtils.createDirectoryIfNotExists(dest);
+
+        for (Path path : walked) {
+            Files.copy(path, dest.resolve(src.relativize(path)), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -133,6 +160,16 @@ public final class FileUtils {
 
         try (Stream<Path> pathStream = Files.list(dir)) {
             return pathStream.collect(Collectors.toList());
+        }
+    }
+
+    public static List<Path> list(Path dir, Predicate<Path> tester) throws IOException {
+        if (FileUtils.existsButIsNotADirectory(dir)) {
+            throw new IOException(dir + " exists, but is not a directory");
+        }
+
+        try (Stream<Path> pathStream = Files.list(dir)) {
+            return pathStream.filter(tester).collect(Collectors.toList());
         }
     }
 
