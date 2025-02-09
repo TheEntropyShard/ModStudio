@@ -18,11 +18,13 @@
 
 package me.theentropyshard.modmaker;
 
+import me.theentropyshard.modmaker.cosmic.Project;
 import me.theentropyshard.modmaker.gui.Gui;
 import me.theentropyshard.modmaker.utils.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ModMaker {
     private final Args args;
@@ -58,6 +60,12 @@ public class ModMaker {
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
+        try {
+            Project.load(Paths.get(""));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         this.gui = new Gui();
         this.gui.show();
     }
@@ -91,5 +99,9 @@ public class ModMaker {
 
     public Path getProjectsDir() {
         return this.projectsDir;
+    }
+
+    public Gui getGui() {
+        return this.gui;
     }
 }

@@ -18,6 +18,7 @@
 
 package me.theentropyshard.modmaker.cosmic.block;
 
+import me.theentropyshard.modmaker.cosmic.block.model.BlockModel;
 import me.theentropyshard.modmaker.cosmic.block.model.CanPlace;
 
 import java.util.List;
@@ -53,6 +54,8 @@ public class BlockState {
     private Map<String, Object> dropParams;
     private Map<String, Integer> intProperties;
     private CanPlace canPlace;
+
+    private transient BlockModel blockModel;
 
     public BlockState() {
 
@@ -256,5 +259,13 @@ public class BlockState {
 
     public void setCanPlace(CanPlace canPlace) {
         this.canPlace = canPlace;
+    }
+
+    public BlockModel getBlockModel() {
+        return this.blockModel;
+    }
+
+    public void setBlockModel(BlockModel blockModel) {
+        this.blockModel = blockModel;
     }
 }
