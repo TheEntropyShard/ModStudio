@@ -37,7 +37,7 @@ public class CuboidModel {
         this.addFace("localPosX", new BlockModelFace(new float[]{0, 0, 16, 16}, true, true, "side"));
         this.addFace("localNegY", new BlockModelFace(new float[]{0, 0, 16, 16}, true, true, "bottom"));
         this.addFace("localPosY", new BlockModelFace(new float[]{0, 0, 16, 16}, true, true, "top"));
-        this.addFace("localNegZ", new BlockModelFace(new float[]{16, 0, 0, 16}, true, true, "side"));
+        this.addFace("localNegZ", new BlockModelFace(new float[]{0, 0, 16, 16}, true, true, "side"));
         this.addFace("localPosZ", new BlockModelFace(new float[]{0, 0, 16, 16}, true, true, "side"));
     }
 
