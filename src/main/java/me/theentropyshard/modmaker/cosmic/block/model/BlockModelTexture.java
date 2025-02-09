@@ -18,9 +18,13 @@
 
 package me.theentropyshard.modmaker.cosmic.block.model;
 
+import java.awt.image.BufferedImage;
+
 public class BlockModelTexture {
     private float[] uv;
     private String fileName;
+
+    private transient BufferedImage texture;
 
     public BlockModelTexture() {
 
@@ -40,5 +44,13 @@ public class BlockModelTexture {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public BufferedImage getTexture() {
+        return this.texture;
+    }
+
+    public void setTexture(BufferedImage texture) {
+        this.texture = texture;
     }
 }
