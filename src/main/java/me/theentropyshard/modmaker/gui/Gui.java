@@ -19,6 +19,7 @@
 package me.theentropyshard.modmaker.gui;
 
 import com.formdev.flatlaf.FlatLaf;
+import me.theentropyshard.modmaker.cosmic.DummyProject;
 import me.theentropyshard.modmaker.cosmic.Project;
 import me.theentropyshard.modmaker.gui.laf.DarkModMakerLaf;
 import me.theentropyshard.modmaker.gui.laf.LightModMakerLaf;
@@ -56,8 +57,7 @@ public class Gui {
         this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         Dimension size = new Dimension(Gui.WIDTH, Gui.HEIGHT);
         this.frame.getContentPane().setPreferredSize(size);
-
-        this.frame.add(new ProjectView(size, Project.currentProject));
+        this.frame.add(new ProjectView(size, Project.currentProject == null ? new DummyProject() : Project.currentProject));
 
         this.frame.pack();
 
