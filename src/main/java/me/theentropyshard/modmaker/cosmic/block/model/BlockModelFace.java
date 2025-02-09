@@ -20,6 +20,8 @@ package me.theentropyshard.modmaker.cosmic.block.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.awt.image.BufferedImage;
+
 public class BlockModelFace {
     private float[] uv;
 
@@ -28,6 +30,8 @@ public class BlockModelFace {
 
     private boolean cullFace;
     private String texture;
+
+    private transient BufferedImage textureImage;
 
     public BlockModelFace() {
 
@@ -70,5 +74,13 @@ public class BlockModelFace {
 
     public void setTexture(String texture) {
         this.texture = texture;
+    }
+
+    public BufferedImage getTextureImage() {
+        return this.textureImage;
+    }
+
+    public void setTextureImage(BufferedImage textureImage) {
+        this.textureImage = textureImage;
     }
 }
