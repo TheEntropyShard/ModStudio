@@ -19,15 +19,20 @@
 package me.theentropyshard.modmaker.gui;
 
 import com.formdev.flatlaf.FlatLaf;
-import me.theentropyshard.modmaker.cosmic.DummyProject;
-import me.theentropyshard.modmaker.cosmic.Project;
+import me.theentropyshard.modmaker.ModMaker;
+import me.theentropyshard.modmaker.project.DummyProject;
+import me.theentropyshard.modmaker.project.Project;
 import me.theentropyshard.modmaker.gui.laf.DarkModMakerLaf;
 import me.theentropyshard.modmaker.gui.laf.LightModMakerLaf;
+import me.theentropyshard.modmaker.gui.project.ProjectCreationView;
 import me.theentropyshard.modmaker.gui.project.ProjectView;
 import me.theentropyshard.modmaker.gui.utils.SwingUtils;
+import me.theentropyshard.modmaker.project.ProjectManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 public class Gui {
     public static final int WIDTH = 1280;
@@ -35,15 +40,13 @@ public class Gui {
 
     private final JFrame frame;
 
-    private boolean darkTheme = false;
-
-    public Gui() {
+    public Gui(String title, boolean darkTheme) {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
 
         FlatLaf.registerCustomDefaultsSource("themes");
 
-        if (this.darkTheme) {
+        if (darkTheme) {
             DarkModMakerLaf.setup();
         } else {
             LightModMakerLaf.setup();
@@ -53,11 +56,103 @@ public class Gui {
         UIManager.put("Button.showMnemonics", true);
         UIManager.put("Component.hideMnemonics", false);
 
-        this.frame = new JFrame("ModMaker");
-        this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.frame = new JFrame(title);
         Dimension size = new Dimension(Gui.WIDTH, Gui.HEIGHT);
+
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+
+        JMenuItem newProjectItem = new JMenuItem("New Project");
+        newProjectItem.setMnemonic(KeyEvent.VK_N);
+        newProjectItem.addActionListener(e -> {
+            ProjectCreationView.showDialog().getProjectInfo().ifPresent(info -> {
+                ModMaker.getInstance().doTask(() -> {
+                    try {
+                        ModMaker.getInstance().getProjectManager().createProject(
+                            info.getName(), info.getNamespace(), info.getVersion()
+                        );
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+            });
+        });
+
+        fileMenu.add(newProjectItem);
+
+        JMenuItem openProjectItem = new JMenuItem("Open");
+        openProjectItem.setMnemonic(KeyEvent.VK_O);
+        openProjectItem.addActionListener(e -> {
+
+        });
+
+        fileMenu.add(openProjectItem);
+
+        JMenu recentProjectsMenu = new JMenu("Recent Projects");
+        recentProjectsMenu.setMnemonic(KeyEvent.VK_R);
+
+        ProjectManager projectManager = ModMaker.getInstance().getProjectManager();
+
+        for (Project project : projectManager.getProjects()) {
+            JMenuItem menuItem = new JMenuItem(project.getName());
+
+            menuItem.addActionListener(e -> {
+                ModMaker.getInstance().doTask(() -> {
+                    ProjectManager manager = ModMaker.getInstance().getProjectManager();
+
+                    manager.setCurrentProject(project);
+                    try {
+                        manager.loadProject(project);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+
+                        return;
+                    }
+
+                   SwingUtilities.invokeLater(() -> {
+                       this.frame.getContentPane().remove(0);
+                       this.frame.add(new ProjectView(size, project));
+                       this.frame.getContentPane().revalidate();
+                   });
+                });
+            });
+
+            recentProjectsMenu.add(menuItem);
+        }
+
+        fileMenu.add(recentProjectsMenu);
+
+        JMenuItem closeProjectItem = new JMenuItem("Close Project");
+        fileMenu.add(closeProjectItem);
+
+        JMenuItem closeAllProjectsItem = new JMenuItem("Close All Projects");
+        fileMenu.add(closeAllProjectsItem);
+
+        JMenuItem closeOtherProjectsItem = new JMenuItem("Close Other Projects");
+        fileMenu.add(closeOtherProjectsItem);
+
+        fileMenu.addSeparator();
+
+        JMenuItem settingsItem = new JMenuItem("Settings");
+        settingsItem.setMnemonic(KeyEvent.VK_T);
+        fileMenu.add(settingsItem);
+
+        fileMenu.addSeparator();
+
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(e -> {
+            ModMaker.getInstance().shutdown();
+        });
+        exitItem.setMnemonic(KeyEvent.VK_E);
+        fileMenu.add(exitItem);
+
+        menuBar.add(fileMenu);
+
+        this.frame.setJMenuBar(menuBar);
         this.frame.getContentPane().setPreferredSize(size);
-        this.frame.add(new ProjectView(size, Project.currentProject == null ? new DummyProject() : Project.currentProject));
+        this.frame.add(new ProjectView(size, new DummyProject()));
 
         this.frame.pack();
 

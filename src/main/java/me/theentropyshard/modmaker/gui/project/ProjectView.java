@@ -19,7 +19,7 @@
 package me.theentropyshard.modmaker.gui.project;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import me.theentropyshard.modmaker.cosmic.Project;
+import me.theentropyshard.modmaker.project.Project;
 import me.theentropyshard.modmaker.cosmic.block.Block;
 import me.theentropyshard.modmaker.gui.FlatSmoothScrollPaneUI;
 

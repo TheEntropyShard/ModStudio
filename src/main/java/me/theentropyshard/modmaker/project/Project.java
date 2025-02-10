@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.cosmic;
+package me.theentropyshard.modmaker.project;
 
 import me.theentropyshard.modmaker.cosmic.block.Block;
 import me.theentropyshard.modmaker.cosmic.block.BlockState;
@@ -36,25 +36,53 @@ import java.util.List;
 import java.util.Map;
 
 public class Project {
-    public static Project currentProject;
-
     private String name;
     private String namespace;
+    private String version;
 
     private final List<Block> blocks;
 
-    public Project(String name, String namespace) {
+    private transient Path workDir;
+
+    public Project() {
+        this(null, null, null);
+    }
+
+    public Project(String name, String namespace, String version) {
         this.name = name;
         this.namespace = namespace;
+        this.version = version;
 
         this.blocks = new ArrayList<>();
     }
 
+    public void save() throws IOException {
+        Path file = this.workDir.resolve("project.json");
+
+        FileUtils.createFileIfNotExists(file);
+
+        FileUtils.writeUtf8(file, Json.writePretty(this));
+    }
+
     public static Project load(Path modDir) throws IOException {
-        Project project = new Project(modDir.getFileName().toString(), modDir.getFileName().toString());
+        if (true) {
+            return new DummyProject();
+        }
+
+        Project project = new Project(modDir.getFileName().toString(), modDir.getFileName().toString(), "0.0.1");
 
         if (!Files.exists(modDir)) {
             throw new IOException("Mod at " + modDir + " does not exist!");
+        }
+
+        Path file = modDir.resolve("project.json");
+
+        if (Files.exists(file)) {
+            Project proj = Json.parse(FileUtils.readUtf8(file), Project.class);
+
+            project.setName(proj.getName());
+            project.setNamespace(proj.getNamespace());
+            project.setVersion(proj.getVersion());
         }
 
         Path blocksDir = modDir.resolve("blocks");
@@ -121,7 +149,7 @@ public class Project {
             project.addBlock(block);
         }
 
-        Project.currentProject = project;
+        project.setWorkDir(modDir);
 
         return project;
     }
@@ -150,7 +178,23 @@ public class Project {
         this.namespace = namespace;
     }
 
+    public String getVersion() {
+        return this.version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     public List<Block> getBlocks() {
         return this.blocks;
+    }
+
+    public Path getWorkDir() {
+        return this.workDir;
+    }
+
+    public void setWorkDir(Path workDir) {
+        this.workDir = workDir;
     }
 }

@@ -16,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modmaker.cosmic;
+package me.theentropyshard.modmaker.project;
 
 public class DummyProject extends Project {
     public DummyProject() {
-        super("", "");
+        super("", "","N/A");
     }
 }

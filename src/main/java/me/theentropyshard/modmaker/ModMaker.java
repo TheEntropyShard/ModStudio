@@ -18,13 +18,20 @@
 
 package me.theentropyshard.modmaker;
 
-import me.theentropyshard.modmaker.cosmic.Project;
+import me.theentropyshard.modmaker.gui.utils.WindowClosingListener;
+import me.theentropyshard.modmaker.project.DummyProject;
+import me.theentropyshard.modmaker.project.Project;
 import me.theentropyshard.modmaker.gui.Gui;
+import me.theentropyshard.modmaker.project.ProjectManager;
 import me.theentropyshard.modmaker.utils.FileUtils;
 
+import javax.swing.*;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ModMaker {
     private final Args args;
@@ -32,7 +39,11 @@ public class ModMaker {
     private final Path workDir;
     private final Path projectsDir;
 
-    private final Gui gui;
+    private final ProjectManager projectManager;
+
+    private final ExecutorService taskPool;
+
+    private Gui gui;
 
     private boolean shutdown;
 
@@ -58,16 +69,46 @@ public class ModMaker {
             System.exit(1);
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
-
+        this.projectManager = new ProjectManager(this.projectsDir);
         try {
-            Project.load(Paths.get(""));
+            this.projectManager.load();
+        } catch (IOException e) {
+            System.err.println("Could not load projects");
+
+            e.printStackTrace();
+
+            System.exit(1);
+        }
+
+/*
+        try {
+            Project.load(Paths.get("F:\\Programs\\ModMakerTestDir\\base"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+*/
 
-        this.gui = new Gui();
-        this.gui.show();
+        this.taskPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                this.gui = new Gui("ModMaker", false);
+                this.gui.getFrame().addWindowListener(new WindowClosingListener(e -> this.shutdown()));
+                this.gui.show();
+            });
+        } catch (InterruptedException e) {
+            System.err.println("Could not wait for GUI to show");
+
+            e.printStackTrace();
+
+            this.shutdown(1);
+        } catch (InvocationTargetException e) {
+            System.err.println("There was an error creating the GUI");
+
+            e.printStackTrace();
+
+            this.shutdown(1);
+        }
     }
 
     private void createDirectories() throws IOException {
@@ -75,12 +116,30 @@ public class ModMaker {
         FileUtils.createDirectoryIfNotExists(this.projectsDir);
     }
 
+    public void doTask(Runnable r) {
+        this.taskPool.submit(r);
+    }
+
     public synchronized void shutdown() {
+        this.shutdown(0);
+    }
+
+    public synchronized void shutdown(int code) {
         if (this.shutdown) {
             return;
         }
 
         this.shutdown = true;
+
+        this.taskPool.shutdown();
+
+        try {
+            this.projectManager.getCurrentProject().save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.exit(code);
     }
 
     private static ModMaker instance;
@@ -99,6 +158,10 @@ public class ModMaker {
 
     public Path getProjectsDir() {
         return this.projectsDir;
+    }
+
+    public ProjectManager getProjectManager() {
+        return this.projectManager;
     }
 
     public Gui getGui() {
