@@ -70,9 +70,28 @@ public class Gui {
             ProjectCreationView.showDialog().getProjectInfo().ifPresent(info -> {
                 ModMaker.getInstance().doTask(() -> {
                     try {
-                        ModMaker.getInstance().getProjectManager().createProject(
+                        Project project = ModMaker.getInstance().getProjectManager().createProject(
                             info.getName(), info.getNamespace(), info.getVersion()
                         );
+
+                        ModMaker.getInstance().doTask(() -> {
+                            ProjectManager manager = ModMaker.getInstance().getProjectManager();
+
+                            manager.setCurrentProject(project);
+                            try {
+                                manager.loadProject(project);
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+
+                                return;
+                            }
+
+                            SwingUtilities.invokeLater(() -> {
+                                this.frame.getContentPane().remove(0);
+                                this.frame.add(new ProjectView(size, project));
+                                this.frame.getContentPane().revalidate();
+                            });
+                        });
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
