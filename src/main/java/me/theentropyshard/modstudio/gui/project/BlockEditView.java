@@ -1,0 +1,417 @@
+/*
+ * ModStudio - https://github.com/TheEntropyShard/ModStudio
+ * Copyright (C) 2024-2025 TheEntropyShard
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package me.theentropyshard.modstudio.gui.project;
+
+import me.theentropyshard.modstudio.ModStudio;
+import me.theentropyshard.modstudio.cosmic.block.Block;
+import me.theentropyshard.modstudio.cosmic.block.BlockState;
+import me.theentropyshard.modstudio.cosmic.block.model.BlockModel;
+import me.theentropyshard.modstudio.cosmic.block.model.BlockModelTexture;
+import me.theentropyshard.modstudio.gui.HtmlLabel;
+import me.theentropyshard.modstudio.gui.Icons;
+import me.theentropyshard.modstudio.gui.IsometricBlockRenderer;
+import me.theentropyshard.modstudio.gui.RenderOptions;
+import me.theentropyshard.modstudio.gui.components.AccordionPanel;
+import me.theentropyshard.modstudio.gui.utils.MouseListenerBuilder;
+import me.theentropyshard.modstudio.gui.utils.Worker;
+import me.theentropyshard.modstudio.project.Project;
+import me.theentropyshard.modstudio.project.ProjectManager;
+import me.theentropyshard.modstudio.utils.FileUtils;
+import me.theentropyshard.modstudio.utils.ImageUtils;
+import me.theentropyshard.modstudio.utils.json.Json;
+import net.miginfocom.swing.MigLayout;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Map;
+
+public class BlockEditView extends JPanel {
+    private final JLabel blockStringIdLabel;
+
+    private JFileChooser fileChooser;
+    private File lastDir;
+
+    public BlockEditView(Block block) {
+        super(new MigLayout("", "[grow]", "[top][]"));
+
+        this.blockStringIdLabel = new HtmlLabel.Builder()
+            .bold("String id: ")
+            .text(block.getStringId())
+            .build();
+        this.add(this.blockStringIdLabel, "growx, wrap");
+
+        block.getBlockStates().forEach((blockStringId, blockStateId) -> {
+            this.addBlockStateView(block.getStringId(), blockStringId, blockStateId, block);
+        });
+    }
+
+    private void addBlockStateView(String blockStringId, String blockStateParams, BlockState blockState, Block block) {
+        ProjectManager projectManager = ModStudio.getInstance().getProjectManager();
+        Project currentProject = projectManager.getCurrentProject();
+        JPanel panel = new JPanel(new MigLayout("", "[left][center]", "[]"));
+        JLabel iconLabel = new JLabel(BlockEditView.generateBlockIcon(blockState)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2d.setColor(this.getBackground());
+                g2d.fillRoundRect(0,0, this.getWidth(), this.getHeight(), 10, 10);
+
+                super.paintComponent(g);
+
+                g2d.setColor(UIManager.getColor("Component.borderColor"));
+                g2d.drawRoundRect(0, 0, this.getWidth() - 1, this.getHeight() - 1, 10, 10);
+            }
+        };
+        MouseListener listener = new MouseListenerBuilder()
+            .mouseEntered(e -> {
+                iconLabel.setBackground(UIManager.getColor("Component.borderColor"));
+            })
+            .mouseExited(e -> {
+                iconLabel.setBackground(UIManager.getColor("Panel.background"));
+            })
+            .mouseClicked(e -> {
+                JPopupMenu popupMenu = new JPopupMenu("Hello");
+
+                JMenuItem changeTopTextureItem = new JMenuItem("Change top texture");
+                changeTopTextureItem.addActionListener(ev -> {
+                    new Worker<Path, Void>("picking top texture") {
+                        @Override
+                        protected Path work() throws Exception {
+                            if (BlockEditView.this.fileChooser == null) {
+                                BlockEditView.this.fileChooser = new JFileChooser();
+                                BlockEditView.this.fileChooser.setCurrentDirectory(ModStudio.getInstance().getWorkDir().toFile());
+                                BlockEditView.this.fileChooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
+                                BlockEditView.this.fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                            }
+
+                            int option = BlockEditView.this.fileChooser.showOpenDialog(ModStudio.getInstance().getGui().getFrame());
+
+                            if (option == JFileChooser.APPROVE_OPTION) {
+                                File file = BlockEditView.this.fileChooser.getSelectedFile();
+                                BlockEditView.this.lastDir = BlockEditView.this.fileChooser.getCurrentDirectory();
+                                Path path = file.toPath();
+
+                                Project project = ModStudio.getInstance().getProjectManager().getCurrentProject();
+
+                                Path workDir = project.getWorkDir();
+                                Path blocksTexturesDir = workDir.resolve("textures").resolve("blocks");
+                                FileUtils.createDirectoryIfNotExists(blocksTexturesDir);
+
+                                Files.copy(path, blocksTexturesDir.resolve(blockStringId.split(":")[1] + "_top.png"),
+                                    StandardCopyOption.REPLACE_EXISTING);
+
+                                return path;
+                            }
+
+                            return null;
+                        }
+
+                        @Override
+                        protected void finish(Path path) {
+                            BufferedImage image;
+                            try {
+                                image = ImageIO.read(path.toFile());
+                            } catch (IOException ex) {
+                                System.err.println("Could not read image " + path);
+
+                                ex.printStackTrace();
+
+                                return;
+                            }
+                            String blockName = block.getStringId().split(":")[1];
+                            BlockModel blockModel = blockState.getBlockModel();
+                            Map<String, BlockModelTexture> textures = blockModel.getTextures();
+                            if (textures.containsKey("top")) {
+                                BlockModelTexture texture = textures.get("top");
+                                texture.setFileName(currentProject.getNamespace() + ":" + "textures/blocks/" + blockName + "_top.png");
+                                texture.setTexture(image);
+                            } else {
+                                BlockModelTexture texture = new BlockModelTexture();
+                                texture.setTexture(image);
+                                texture.setFileName(currentProject.getNamespace() + ":" + "textures/blocks/" + blockName + "_top.png");
+                                textures.put("top", texture);
+                            }
+                            iconLabel.setIcon(BlockEditView.generateBlockIcon(blockState));
+                            Path blocksDir = currentProject.getWorkDir().resolve("blocks");
+                            try {
+                                FileUtils.createDirectoryIfNotExists(blocksDir);
+                                FileUtils.writeUtf8(blocksDir.resolve(blockName + ".json"), Json.writePretty(block));
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+
+                                return;
+                            }
+
+                            Path modelsDir = currentProject.getWorkDir().resolve("models").resolve("blocks");
+                            try {
+                                FileUtils.createDirectoryIfNotExists(modelsDir);
+                                FileUtils.writeUtf8(modelsDir.resolve("model_" + blockName + ".json"), Json.writePretty(blockModel));
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+
+                                return;
+                            }
+                        }
+                    }.execute();
+                });
+                popupMenu.add(changeTopTextureItem);
+
+                JMenuItem changeSideTextureItem = new JMenuItem("Change side texture");
+                changeSideTextureItem.addActionListener(ev -> {
+                    new Worker<Path, Void>("picking side texture") {
+                        @Override
+                        protected Path work() throws Exception {
+                            if (BlockEditView.this.fileChooser == null) {
+                                BlockEditView.this.fileChooser = new JFileChooser();
+                                BlockEditView.this.fileChooser.setCurrentDirectory(ModStudio.getInstance().getWorkDir().toFile());
+                                BlockEditView.this.fileChooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
+                                BlockEditView.this.fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                            }
+
+                            int option = BlockEditView.this.fileChooser.showOpenDialog(ModStudio.getInstance().getGui().getFrame());
+
+                            if (option == JFileChooser.APPROVE_OPTION) {
+                                File file = BlockEditView.this.fileChooser.getSelectedFile();
+                                BlockEditView.this.lastDir = BlockEditView.this.fileChooser.getCurrentDirectory();
+                                Path path = file.toPath();
+
+                                Project project = ModStudio.getInstance().getProjectManager().getCurrentProject();
+
+                                Path workDir = project.getWorkDir();
+                                Path blocksTexturesDir = workDir.resolve("textures").resolve("blocks");
+                                FileUtils.createDirectoryIfNotExists(blocksTexturesDir);
+
+                                Files.copy(path, blocksTexturesDir.resolve(blockStringId.split(":")[1] + "_side.png"),
+                                    StandardCopyOption.REPLACE_EXISTING);
+
+                                return path;
+                            }
+
+                            return null;
+                        }
+
+                        @Override
+                        protected void finish(Path path) {
+                            BufferedImage image;
+                            try {
+                                image = ImageIO.read(path.toFile());
+                            } catch (IOException ex) {
+                                System.err.println("Could not read image " + path);
+
+                                ex.printStackTrace();
+
+                                return;
+                            }
+                            String blockName = block.getStringId().split(":")[1];
+                            BlockModel blockModel = blockState.getBlockModel();
+                            Map<String, BlockModelTexture> textures = blockModel.getTextures();
+                            if (textures.containsKey("side")) {
+                                BlockModelTexture texture = textures.get("side");
+                                texture.setFileName(currentProject.getNamespace() + ":" + "textures/blocks/" + blockName + "_side.png");
+                                texture.setTexture(image);
+                            } else {
+                                BlockModelTexture texture = new BlockModelTexture();
+                                texture.setTexture(image);
+                                texture.setFileName(currentProject.getNamespace() + ":" + "textures/blocks/" + blockName + "_side.png");
+                                textures.put("side", texture);
+                            }
+                            iconLabel.setIcon(BlockEditView.generateBlockIcon(blockState));
+
+
+                            Path blocksDir = currentProject.getWorkDir().resolve("blocks");
+                            try {
+                                FileUtils.createDirectoryIfNotExists(blocksDir);
+                                FileUtils.writeUtf8(blocksDir.resolve(blockName + ".json"), Json.writePretty(block));
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+
+                                return;
+                            }
+
+                            Path modelsDir = currentProject.getWorkDir().resolve("models").resolve("blocks");
+                            try {
+                                FileUtils.createDirectoryIfNotExists(modelsDir);
+                                FileUtils.writeUtf8(modelsDir.resolve("model_" + blockName + ".json"), Json.writePretty(blockModel));
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+
+                                return;
+                            }
+                        }
+                    }.execute();
+                });
+                popupMenu.add(changeSideTextureItem);
+
+                JMenuItem changeBottomTextureItem = new JMenuItem("Change bottom texture");
+                changeBottomTextureItem.addActionListener(ev -> {
+                    new Worker<Path, Void>("picking side texture") {
+                        @Override
+                        protected Path work() throws Exception {
+                            if (BlockEditView.this.fileChooser == null) {
+                                BlockEditView.this.fileChooser = new JFileChooser();
+                                BlockEditView.this.fileChooser.setCurrentDirectory(ModStudio.getInstance().getWorkDir().toFile());
+                                BlockEditView.this.fileChooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
+                                BlockEditView.this.fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                            }
+
+                            int option = BlockEditView.this.fileChooser.showOpenDialog(ModStudio.getInstance().getGui().getFrame());
+
+                            if (option == JFileChooser.APPROVE_OPTION) {
+                                File file = BlockEditView.this.fileChooser.getSelectedFile();
+                                BlockEditView.this.lastDir = BlockEditView.this.fileChooser.getCurrentDirectory();
+                                Path path = file.toPath();
+
+                                Project project = ModStudio.getInstance().getProjectManager().getCurrentProject();
+
+                                Path workDir = project.getWorkDir();
+                                Path blocksTexturesDir = workDir.resolve("textures").resolve("blocks");
+                                FileUtils.createDirectoryIfNotExists(blocksTexturesDir);
+
+                                Files.copy(path, blocksTexturesDir.resolve(blockStringId.split(":")[1] + "_bottom.png"),
+                                    StandardCopyOption.REPLACE_EXISTING);
+
+                                return path;
+                            }
+
+                            return null;
+                        }
+
+                        @Override
+                        protected void finish(Path path) {
+                            BufferedImage image;
+                            try {
+                                image = ImageIO.read(path.toFile());
+                            } catch (IOException ex) {
+                                System.err.println("Could not read image " + path);
+
+                                ex.printStackTrace();
+
+                                return;
+                            }
+                            String blockName = block.getStringId().split(":")[1];
+                            BlockModel blockModel = blockState.getBlockModel();
+                            Map<String, BlockModelTexture> textures = blockModel.getTextures();
+                            if (textures.containsKey("bottom")) {
+                                BlockModelTexture texture = textures.get("bottom");
+                                texture.setFileName(currentProject.getNamespace() + ":" + "textures/blocks/" + blockName + "_bottom.png");
+                                texture.setTexture(image);
+                            } else {
+                                BlockModelTexture texture = new BlockModelTexture();
+                                texture.setTexture(image);
+                                texture.setFileName(currentProject.getNamespace() + ":" + "textures/blocks/" + blockName + "_bottom.png");
+                                textures.put("bottom", texture);
+                            }
+                            iconLabel.setIcon(BlockEditView.generateBlockIcon(blockState));
+
+
+                            Path blocksDir = currentProject.getWorkDir().resolve("blocks");
+                            try {
+                                FileUtils.createDirectoryIfNotExists(blocksDir);
+                                FileUtils.writeUtf8(blocksDir.resolve(blockName + ".json"), Json.writePretty(block));
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+
+                                return;
+                            }
+
+                            Path modelsDir = currentProject.getWorkDir().resolve("models").resolve("blocks");
+                            try {
+                                FileUtils.createDirectoryIfNotExists(modelsDir);
+                                FileUtils.writeUtf8(modelsDir.resolve("model_" + blockName + ".json"), Json.writePretty(blockModel));
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+
+                                return;
+                            }
+                        }
+                    }.execute();
+                });
+                popupMenu.add(changeBottomTextureItem);
+
+                popupMenu.show(iconLabel, e.getX(), e.getY());
+            })
+            .build();
+        iconLabel.addMouseListener(listener);
+        iconLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        iconLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        panel.add(iconLabel);
+        AccordionPanel accordionPanel = new AccordionPanel(blockStringId + "[" + blockStateParams + "]", panel);
+        this.add(accordionPanel, "growx, wrap");
+    }
+
+    public static Icon generateBlockIcon(BlockState blockState) {
+        BlockModel blockModel = blockState.getBlockModel();
+
+        if (blockModel == null) {
+            return Icons.MOD_DEFAULT_TEXTURE;
+        }
+
+        Map<String, BlockModelTexture> textures = blockModel.getTextures();
+
+        if (textures == null) {
+            return Icons.MOD_DEFAULT_TEXTURE;
+        }
+
+        BufferedImage texture = null;
+
+        RenderOptions options = new RenderOptions();
+        options.setScale(2);
+
+        if (textures.containsKey("all")) {
+            BufferedImage image = textures.get("all").getTexture();
+
+            texture = IsometricBlockRenderer.render(
+                image, image, image, options
+            );
+        } else {
+            BufferedImage top = null;
+            BufferedImage side = null;
+
+            if (textures.containsKey("top")) {
+                top = textures.get("top").getTexture();
+            }
+
+            if (textures.containsKey("side")) {
+                side = textures.get("side").getTexture();
+            }
+
+            if (top != null && side != null) {
+                texture = IsometricBlockRenderer.render(
+                    top, side, side, options
+                );
+            }
+        }
+
+        return texture == null ? Icons.MOD_DEFAULT_TEXTURE : new ImageIcon(ImageUtils.fitImageAndResize(
+            texture, 64, 64
+        ));
+    }
+}

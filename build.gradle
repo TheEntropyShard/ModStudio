@@ -24,9 +24,9 @@ plugins {
     //id 'edu.sc.seis.macAppBundle' version '2.3.0'
 }
 
-def theMainClass = 'me.theentropyshard.modmaker.Main'
+def theMainClass = 'me.theentropyshard.modstudio.Main'
 def theVersion = '0.0.1'
-def theName = 'ModMaker'
+def theName = 'ModStudio'
 
 group = 'me.theentropyshard'
 version = theVersion
