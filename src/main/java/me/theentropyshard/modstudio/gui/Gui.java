@@ -151,7 +151,12 @@ public class Gui {
 
                     @Override
                     protected void finish(Project project) {
-                        Gui.this.frame.getContentPane().remove(0);
+                        Container contentPane = Gui.this.frame.getContentPane();
+
+                        if (contentPane.getComponentCount() >= 1) {
+                            contentPane.remove(0);
+                        }
+
                         Gui.this.frame.add(new ProjectView(size, project));
                         Gui.this.frame.getContentPane().revalidate();
                     }
@@ -240,7 +245,7 @@ public class Gui {
 
         this.frame.setJMenuBar(menuBar);
         this.frame.getContentPane().setPreferredSize(size);
-        this.frame.add(new ProjectView(size, new DummyProject()));
+        //this.frame.add(new ProjectView(size, new DummyProject()));
 
         this.frame.pack();
 
