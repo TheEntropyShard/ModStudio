@@ -62,9 +62,15 @@ public class BlockEditView extends JPanel {
 
         this.blockStringIdLabel = new HtmlLabel.Builder()
             .bold("String id: ")
-            .text(block.getStringId())
             .build();
-        this.add(this.blockStringIdLabel, "growx, wrap");
+
+        JPanel blockStringIdPanel = new JPanel(new BorderLayout());
+        blockStringIdPanel.add(this.blockStringIdLabel, BorderLayout.WEST);
+
+        JTextField blockStringIdField = new JTextField(block.getStringId());
+        blockStringIdPanel.add(blockStringIdField, BorderLayout.CENTER);
+
+        this.add(blockStringIdPanel, "growx, wrap");
 
         block.getBlockStates().forEach((blockStringId, blockStateId) -> {
             this.addBlockStateView(block.getStringId(), blockStringId, blockStateId, block);
