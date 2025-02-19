@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modstudio.gui.project;
+package me.theentropyshard.modstudio.gui.view.project;
 
 public class ProjectCreationInfo {
     private final String name;

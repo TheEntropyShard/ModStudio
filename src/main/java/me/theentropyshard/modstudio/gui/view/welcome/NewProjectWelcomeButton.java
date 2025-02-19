@@ -16,16 +16,30 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modstudio.gui.project;
+package me.theentropyshard.modstudio.gui.view.welcome;
+
+import me.theentropyshard.modstudio.gui.Icons;
+import me.theentropyshard.modstudio.gui.components.Card;
 
 import javax.swing.*;
+import java.awt.*;
 
-public class ProjectNamespaceField extends JTextField {
-    public ProjectNamespaceField(String text) {
-        this.updateText(text);
+public class NewProjectWelcomeButton extends Card {
+    private static final int SIDE_SIZE = 64;
+    private static final Dimension PREFERRED_SIZE = new Dimension(
+        NewProjectWelcomeButton.SIDE_SIZE, NewProjectWelcomeButton.SIDE_SIZE
+    );
+
+    public NewProjectWelcomeButton() {
+        super(5, 10);
+
+        this.setLayout(new BorderLayout());
+
+        this.add(new JLabel(Icons.get("add").derive(32, 32)), BorderLayout.CENTER);
     }
 
-    public void updateText(String text) {
-        this.setText(text.toLowerCase().replace(" ", ""));
+    @Override
+    public Dimension getPreferredSize() {
+        return NewProjectWelcomeButton.PREFERRED_SIZE;
     }
 }

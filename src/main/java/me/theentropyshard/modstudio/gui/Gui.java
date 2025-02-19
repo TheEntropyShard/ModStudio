@@ -22,12 +22,12 @@ import com.formdev.flatlaf.FlatLaf;
 import me.theentropyshard.modstudio.ModStudio;
 import me.theentropyshard.modstudio.gui.laf.DarkModStudioLaf;
 import me.theentropyshard.modstudio.gui.laf.LightModStudioLaf;
-import me.theentropyshard.modstudio.gui.project.ProjectCreationView;
-import me.theentropyshard.modstudio.gui.project.ProjectView;
+import me.theentropyshard.modstudio.gui.view.project.ProjectCreationView;
+import me.theentropyshard.modstudio.gui.view.project.ProjectView;
 import me.theentropyshard.modstudio.gui.utils.MessageBox;
 import me.theentropyshard.modstudio.gui.utils.SwingUtils;
 import me.theentropyshard.modstudio.gui.utils.Worker;
-import me.theentropyshard.modstudio.project.DummyProject;
+import me.theentropyshard.modstudio.gui.view.welcome.WelcomeView;
 import me.theentropyshard.modstudio.project.Project;
 import me.theentropyshard.modstudio.project.ProjectManager;
 import me.theentropyshard.modstudio.utils.FileUtils;
@@ -245,7 +245,9 @@ public class Gui {
 
         this.frame.setJMenuBar(menuBar);
         this.frame.getContentPane().setPreferredSize(size);
-        //this.frame.add(new ProjectView(size, new DummyProject()));
+        WelcomeView welcomeView = new WelcomeView();
+        welcomeView.setPreferredSize(size);
+        this.frame.add(welcomeView, BorderLayout.CENTER);
 
         this.frame.pack();
 

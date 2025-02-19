@@ -32,7 +32,10 @@ public class Icons {
         .derive(64, 64);
 
     public static void load() {
-        for (String name : new String[]{"folder", "image", "json", "project", "unknown", "chevronDown", "chevronRight"}) {
+        for (String name : new String[]{
+            "folder", "image", "json", "project", "unknown", "chevronDown", "chevronRight",
+            "open_disk", "open_disk_hover", "add"
+        }) {
             String path = "/icons/" + name;
 
             if (Gui.darkTheme) {

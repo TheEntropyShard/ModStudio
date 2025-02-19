@@ -1,4 +1,4 @@
-package me.theentropyshard.modstudio.gui.project;
+package me.theentropyshard.modstudio.gui.view.project;
 
 import javax.swing.*;
 

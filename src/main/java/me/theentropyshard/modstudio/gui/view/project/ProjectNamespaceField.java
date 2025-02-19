@@ -16,38 +16,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modstudio.gui.project;
+package me.theentropyshard.modstudio.gui.view.project;
 
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.*;
 
-public class ProjectTreeNode extends DefaultMutableTreeNode {
-    private final Type type;
-    private final String text;
-    private final Object data;
-
-    public ProjectTreeNode(String text, Type type, Object data) {
-        super(data);
-
-        this.type = type;
-        this.text = text;
-        this.data = data;
+public class ProjectNamespaceField extends JTextField {
+    public ProjectNamespaceField(String text) {
+        this.updateText(text);
     }
 
-    public Type getType() {
-        return this.type;
-    }
-
-    public String getText() {
-        return this.text;
-    }
-
-    public Object getData() {
-        return this.data;
-    }
-
-    public enum Type {
-        PROJECT,
-        CATEGORY,
-        FILE
+    public void updateText(String text) {
+        this.setText(text.toLowerCase().replace(" ", ""));
     }
 }
