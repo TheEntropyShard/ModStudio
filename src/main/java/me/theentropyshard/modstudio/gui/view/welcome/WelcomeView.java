@@ -46,10 +46,13 @@ public class WelcomeView extends JPanel {
         textPanel.add(this.line1, textGbc);
 
         this.line2 = new JLabel("Create a new project to start from scratch.");
+        this.line2.setBorder(new EmptyBorder(30, 0, 0, 0));
+        this.line2.setFont(this.line2.getFont().deriveFont(13.0f));
         textGbc.gridy++;
         textPanel.add(this.line2, textGbc);
 
         this.line3 = new JLabel("Open existing project from disk.");
+        this.line3.setFont(this.line3.getFont().deriveFont(13.0f));
         textGbc.gridy++;
         textPanel.add(this.line3, textGbc);
 
@@ -61,18 +64,17 @@ public class WelcomeView extends JPanel {
         buttonsGbc.fill = GridBagConstraints.HORIZONTAL;
 
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
-        buttonsPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+        buttonsPanel.setBorder(new EmptyBorder(30, 0, 0, 0));
 
-        NewProjectWelcomeButton newProjectButton = new NewProjectWelcomeButton();
         buttonsGbc.gridy++;
         buttonsGbc.gridx++;
-        buttonsPanel.add(newProjectButton, buttonsGbc);
+        buttonsPanel.add(new WelcomeViewButton("add", "New Project"), buttonsGbc);
 
         buttonsGbc.gridx++;
-        buttonsPanel.add(Box.createHorizontalStrut(10), buttonsGbc);
+        buttonsPanel.add(Box.createHorizontalStrut(50), buttonsGbc);
 
         buttonsGbc.gridx++;
-        buttonsPanel.add(new OpenProjectWelcomeButton(), buttonsGbc);
+        buttonsPanel.add(new WelcomeViewButton("open_disk", "Open Project"), buttonsGbc);
 
         mainGbc.gridy++;
         this.add(buttonsPanel, mainGbc);
