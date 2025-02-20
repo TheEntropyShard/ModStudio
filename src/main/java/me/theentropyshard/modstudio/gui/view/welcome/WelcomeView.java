@@ -18,6 +18,8 @@
 
 package me.theentropyshard.modstudio.gui.view.welcome;
 
+import me.theentropyshard.modstudio.gui.actions.NewProjectAction;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -68,7 +70,9 @@ public class WelcomeView extends JPanel {
 
         buttonsGbc.gridy++;
         buttonsGbc.gridx++;
-        buttonsPanel.add(new WelcomeViewButton("add", "New Project"), buttonsGbc);
+        WelcomeViewButton newProjectButton = new WelcomeViewButton("add", "New Project");
+        newProjectButton.addOnClickListener(() -> new NewProjectAction().actionPerformed(null));
+        buttonsPanel.add(newProjectButton, buttonsGbc);
 
         buttonsGbc.gridx++;
         buttonsPanel.add(Box.createHorizontalStrut(50), buttonsGbc);

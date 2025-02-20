@@ -20,13 +20,13 @@ package me.theentropyshard.modstudio.gui;
 
 import com.formdev.flatlaf.FlatLaf;
 import me.theentropyshard.modstudio.ModStudio;
+import me.theentropyshard.modstudio.gui.actions.NewProjectAction;
 import me.theentropyshard.modstudio.gui.laf.DarkModStudioLaf;
 import me.theentropyshard.modstudio.gui.laf.LightModStudioLaf;
-import me.theentropyshard.modstudio.gui.view.project.ProjectCreationView;
-import me.theentropyshard.modstudio.gui.view.project.ProjectView;
 import me.theentropyshard.modstudio.gui.utils.MessageBox;
 import me.theentropyshard.modstudio.gui.utils.SwingUtils;
 import me.theentropyshard.modstudio.gui.utils.Worker;
+import me.theentropyshard.modstudio.gui.view.project.ProjectView;
 import me.theentropyshard.modstudio.gui.view.welcome.WelcomeView;
 import me.theentropyshard.modstudio.project.Project;
 import me.theentropyshard.modstudio.project.ProjectManager;
@@ -43,6 +43,7 @@ import java.io.IOException;
 public class Gui {
     public static final int WIDTH = 1280;
     public static final int HEIGHT = 720;
+    public static final Dimension SIZE = new Dimension(Gui.WIDTH, Gui.HEIGHT);
 
     private final JFrame frame;
 
@@ -70,7 +71,6 @@ public class Gui {
         UIManager.put("Tree.expandedIcon", Icons.get("chevronDown"));
 
         this.frame = new JFrame(title);
-        Dimension size = new Dimension(Gui.WIDTH, Gui.HEIGHT);
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -79,38 +79,7 @@ public class Gui {
 
         JMenuItem newProjectItem = new JMenuItem("New Project");
         newProjectItem.setMnemonic(KeyEvent.VK_N);
-        newProjectItem.addActionListener(e -> {
-            ProjectCreationView.showDialog().getProjectInfo().ifPresent(info -> {
-                ModStudio.getInstance().doTask(() -> {
-                    try {
-                        Project project = ModStudio.getInstance().getProjectManager().createProject(
-                            info.getName(), info.getNamespace(), info.getVersion()
-                        );
-
-                        ModStudio.getInstance().doTask(() -> {
-                            ProjectManager manager = ModStudio.getInstance().getProjectManager();
-
-                            manager.setCurrentProject(project);
-                            try {
-                                manager.loadProject(project);
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-
-                                return;
-                            }
-
-                            SwingUtilities.invokeLater(() -> {
-                                this.frame.getContentPane().remove(0);
-                                this.frame.add(new ProjectView(size, project));
-                                this.frame.getContentPane().revalidate();
-                            });
-                        });
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                });
-            });
-        });
+        newProjectItem.setAction(new NewProjectAction());
 
         fileMenu.add(newProjectItem);
 
@@ -157,7 +126,7 @@ public class Gui {
                             contentPane.remove(0);
                         }
 
-                        Gui.this.frame.add(new ProjectView(size, project));
+                        Gui.this.frame.add(new ProjectView(Gui.SIZE, project));
                         Gui.this.frame.getContentPane().revalidate();
                     }
                 }.execute();
@@ -257,9 +226,9 @@ public class Gui {
         menuBar.add(projectMenu);
 
         this.frame.setJMenuBar(menuBar);
-        this.frame.getContentPane().setPreferredSize(size);
+        this.frame.getContentPane().setPreferredSize(Gui.SIZE);
         WelcomeView welcomeView = new WelcomeView();
-        welcomeView.setPreferredSize(size);
+        welcomeView.setPreferredSize(Gui.SIZE);
         this.frame.add(welcomeView, BorderLayout.CENTER);
 
         this.frame.pack();
