@@ -80,7 +80,7 @@ public class BlockEditView extends JPanel {
     private void addBlockStateView(String blockStringId, String blockStateParams, BlockState blockState, Block block) {
         ProjectManager projectManager = ModStudio.getInstance().getProjectManager();
         Project currentProject = projectManager.getCurrentProject();
-        JPanel panel = new JPanel(new MigLayout("", "[left][center]", "[]"));
+        JPanel panel = new JPanel(new MigLayout("fill", "[left][fill, center]", "[top]"));
         JLabel iconLabel = new JLabel(BlockEditView.generateBlockIcon(blockState)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -369,6 +369,109 @@ public class BlockEditView extends JPanel {
         iconLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         iconLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
         panel.add(iconLabel);
+
+        JPanel blockStateParamsPanel = new JPanel(new MigLayout("fillx, wrap 2, insets 0, gap 5 5", "[][]", "[top]"));
+
+        JLabel langKeyLabel = new JLabel("Lang key: ");
+        blockStateParamsPanel.add(langKeyLabel, "aligny baseline");
+
+        JTextField langKeyField = new JTextField(blockState.getLangKey());
+        blockStateParamsPanel.add(langKeyField, "growx, pushx");
+
+        JLabel modelNameLabel = new JLabel("Model name: ");
+        blockStateParamsPanel.add(modelNameLabel, "aligny baseline");
+
+        JTextField modelNameField = new JTextField(blockState.getModelName());
+        blockStateParamsPanel.add(modelNameField, "growx, pushx");
+
+        JLabel swapGroupIdLabel = new JLabel("Swap group id: ");
+        blockStateParamsPanel.add(swapGroupIdLabel, "aligny baseline");
+
+        JTextField swapGroupIdField = new JTextField(blockState.getSwapGroupId());
+        blockStateParamsPanel.add(swapGroupIdField, "growx, pushx");
+
+        JLabel blockEventsIdLabel = new JLabel("Block events id: ");
+        blockStateParamsPanel.add(blockEventsIdLabel, "aligny baseline");
+
+        JTextField blockEventsIdField = new JTextField(blockState.getBlockEventsId());
+        blockStateParamsPanel.add(blockEventsIdField, "growx, pushx");
+
+        JCheckBox allowSwappingField = new JCheckBox("Allow swapping");
+        allowSwappingField.setSelected(blockState.isAllowSwapping());
+        blockStateParamsPanel.add(allowSwappingField, "growx, pushx, span 2");
+
+        JCheckBox isOpaqueField = new JCheckBox("Is opaque");
+        isOpaqueField.setSelected(blockState.isOpaque());
+        blockStateParamsPanel.add(isOpaqueField, "growx, pushx, span 2");
+
+        JCheckBox canRaycastForBreakField = new JCheckBox("Can raycast for break");
+        canRaycastForBreakField.setSelected(blockState.canRaycastForBreak());
+        blockStateParamsPanel.add(canRaycastForBreakField, "growx, pushx, span 2");
+
+        JCheckBox canRaycastForPlaceOnField = new JCheckBox("Can raycast for place on");
+        canRaycastForPlaceOnField.setSelected(blockState.canRaycastForPlaceOn());
+        blockStateParamsPanel.add(canRaycastForPlaceOnField, "growx, pushx, span 2");
+
+        JCheckBox canRaycastForReplaceField = new JCheckBox("Can raycast for replace");
+        canRaycastForReplaceField.setSelected(blockState.canRaycastForReplace());
+        blockStateParamsPanel.add(canRaycastForReplaceField, "growx, pushx, span 2");
+
+        JCheckBox catalogHiddenField = new JCheckBox("Catalog hidden");
+        catalogHiddenField.setSelected(blockState.isCatalogHidden());
+        blockStateParamsPanel.add(catalogHiddenField, "growx, pushx, span 2");
+
+        JCheckBox walkThroughField = new JCheckBox("Walk through");
+        walkThroughField.setSelected(blockState.isWalkThrough());
+        blockStateParamsPanel.add(walkThroughField, "growx, pushx, span 2");
+
+        JCheckBox isFluidField = new JCheckBox("Is fluid");
+        isFluidField.setSelected(blockState.isFluid());
+        blockStateParamsPanel.add(isFluidField, "growx, pushx, span 2");
+
+        JLabel lightAttenuationLabel = new JLabel("Light attenuation: ");
+        blockStateParamsPanel.add(lightAttenuationLabel, "aligny baseline");
+
+        JTextField lightAttenuationField = new JTextField(String.valueOf(blockState.getLightAttenuation()));
+        blockStateParamsPanel.add(lightAttenuationField, "growx, pushx");
+
+        JLabel lightLevelRedLabel = new JLabel("Light level red: ");
+        blockStateParamsPanel.add(lightLevelRedLabel, "aligny baseline");
+
+        JTextField lightLevelRedField = new JTextField(String.valueOf(blockState.getLightLevelRed()));
+        blockStateParamsPanel.add(lightLevelRedField, "growx, pushx");
+
+        JLabel lightLevelGreenLabel = new JLabel("Light level green: ");
+        blockStateParamsPanel.add(lightLevelGreenLabel, "aligny baseline");
+
+        JTextField lightLevelGreenField = new JTextField(String.valueOf(blockState.getLightLevelGreen()));
+        blockStateParamsPanel.add(lightLevelGreenField, "growx, pushx");
+
+        JLabel lightLevelBlueLabel = new JLabel("Light level blue: ");
+        blockStateParamsPanel.add(lightLevelBlueLabel, "aligny baseline");
+
+        JTextField lightLevelBlueField = new JTextField(String.valueOf(blockState.getLightLevelBlue()));
+        blockStateParamsPanel.add(lightLevelBlueField, "growx, pushx");
+
+        JLabel frictionLabel = new JLabel("Friction: ");
+        blockStateParamsPanel.add(frictionLabel, "aligny baseline");
+
+        JTextField frictionField = new JTextField(String.valueOf(blockState.getFriction()));
+        blockStateParamsPanel.add(frictionField, "growx, pushx");
+
+        JLabel bouncinessLabel = new JLabel("Bounciness: ");
+        blockStateParamsPanel.add(bouncinessLabel, "aligny baseline");
+
+        JTextField bouncinessField = new JTextField(String.valueOf(blockState.getBounciness()));
+        blockStateParamsPanel.add(bouncinessField, "growx, pushx");
+
+        JLabel refractiveIndexLabel = new JLabel("Refractive index: ");
+        blockStateParamsPanel.add(refractiveIndexLabel, "aligny baseline");
+
+        JTextField refractiveIndexField = new JTextField(String.valueOf(blockState.getBounciness()));
+        blockStateParamsPanel.add(refractiveIndexField, "growx, pushx");
+
+        panel.add(blockStateParamsPanel, "grow, push");
+
         AccordionPanel accordionPanel = new AccordionPanel(blockStringId + "[" + blockStateParams + "]", panel);
         this.add(accordionPanel, "growx, wrap");
     }
