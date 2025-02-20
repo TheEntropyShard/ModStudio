@@ -53,8 +53,6 @@ public class WelcomeViewButton extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        System.out.println(this.button.getSize());
     }
 
     public void addOnClickListener(Runnable r) {
