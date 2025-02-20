@@ -206,6 +206,19 @@ public class Gui {
         JMenu projectMenu = new JMenu("Project");
         projectMenu.setMnemonic(KeyEvent.VK_P);
 
+        JMenuItem openProjectDirItem = new JMenuItem("Open project folder");
+        openProjectDirItem.addActionListener(e -> {
+            SwingUtils.startWorker(() -> {
+                Project currentProject = ModStudio.getInstance().getProjectManager().getCurrentProject();
+
+                if (currentProject != null) {
+                    OperatingSystem.open(currentProject.getWorkDir());
+                }
+            });
+        });
+        openProjectDirItem.setMnemonic(KeyEvent.VK_O);
+        projectMenu.add(openProjectDirItem);
+
         JMenu exportProjectMenu = new JMenu("Export");
         projectMenu.add(exportProjectMenu);
 
