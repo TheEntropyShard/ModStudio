@@ -34,26 +34,29 @@ public class BlockState {
     private String swapGroupId;
     private String blockEventsId;
     private String dropId;
-    private Boolean allowSwapping;
-    private Boolean isOpaque;
-    private Boolean canRaycastForBreak;
-    private Boolean canRaycastForPlaceOn;
+    private Boolean allowSwapping/* = true*/;
+    private Boolean isOpaque/* = true*/;
+    private Boolean canRaycastForBreak/* = true*/;
+    private Boolean canRaycastForPlaceOn/* = true*/;
     private Boolean canRaycastForReplace;
     private Boolean catalogHidden;
     private Boolean walkThrough;
     private Boolean isFluid;
-    private Integer lightAttenuation;
+    private Integer lightAttenuation/* = 15*/;
     private Integer lightLevelRed;
     private Integer lightLevelGreen;
     private Integer lightLevelBlue;
     private Integer rotXZ;
-    private Float hardness;
-    private Float blastResistance;
+    private Float hardness/* = 1.5f*/;
+    private Float blastResistance/* = 100.0f*/;
     private List<String> stateGenerators;
     private List<String> tags;
     private Map<String, Object> dropParams;
     private Map<String, Integer> intProperties;
     private CanPlace canPlace;
+    private Float friction/* = 1.0f*/;
+    private Float bounciness/* = 0.0f*/;
+    private Float refractiveIndex/* = 1.0f*/;
 
     private transient BlockModel blockModel;
     private transient String params;
@@ -102,123 +105,123 @@ public class BlockState {
         this.dropId = dropId;
     }
 
-    public Boolean getAllowSwapping() {
-        return this.allowSwapping;
+    public boolean isAllowSwapping() {
+        return this.allowSwapping != null && this.allowSwapping;
     }
 
-    public void setAllowSwapping(Boolean allowSwapping) {
+    public void setAllowSwapping(boolean allowSwapping) {
         this.allowSwapping = allowSwapping;
     }
 
-    public Boolean getOpaque() {
-        return this.isOpaque;
+    public boolean isOpaque() {
+        return this.isOpaque != null && this.isOpaque;
     }
 
-    public void setOpaque(Boolean opaque) {
+    public void setOpaque(boolean opaque) {
         this.isOpaque = opaque;
     }
 
-    public Boolean getCanRaycastForBreak() {
-        return this.canRaycastForBreak;
+    public boolean canRaycastForBreak() {
+        return this.canRaycastForBreak != null && this.canRaycastForBreak;
     }
 
-    public void setCanRaycastForBreak(Boolean canRaycastForBreak) {
+    public void setCanRaycastForBreak(boolean canRaycastForBreak) {
         this.canRaycastForBreak = canRaycastForBreak;
     }
 
-    public Boolean getCanRaycastForPlaceOn() {
-        return this.canRaycastForPlaceOn;
+    public boolean canRaycastForPlaceOn() {
+        return this.canRaycastForPlaceOn != null && this.canRaycastForPlaceOn;
     }
 
-    public void setCanRaycastForPlaceOn(Boolean canRaycastForPlaceOn) {
+    public void setCanRaycastForPlaceOn(boolean canRaycastForPlaceOn) {
         this.canRaycastForPlaceOn = canRaycastForPlaceOn;
     }
 
-    public Boolean getCanRaycastForReplace() {
-        return this.canRaycastForReplace;
+    public boolean canRaycastForReplace() {
+        return this.canRaycastForReplace != null && this.canRaycastForReplace;
     }
 
-    public void setCanRaycastForReplace(Boolean canRaycastForReplace) {
+    public void setCanRaycastForReplace(boolean canRaycastForReplace) {
         this.canRaycastForReplace = canRaycastForReplace;
     }
 
-    public Boolean getCatalogHidden() {
-        return this.catalogHidden;
+    public boolean isCatalogHidden() {
+        return this.catalogHidden != null && this.catalogHidden;
     }
 
-    public void setCatalogHidden(Boolean catalogHidden) {
+    public void setCatalogHidden(boolean catalogHidden) {
         this.catalogHidden = catalogHidden;
     }
 
-    public Boolean getWalkThrough() {
-        return this.walkThrough;
+    public boolean isWalkThrough() {
+        return this.walkThrough != null && this.walkThrough;
     }
 
-    public void setWalkThrough(Boolean walkThrough) {
+    public void setWalkThrough(boolean walkThrough) {
         this.walkThrough = walkThrough;
     }
 
-    public Boolean getFluid() {
-        return this.isFluid;
+    public boolean isFluid() {
+        return this.isFluid != null && this.isFluid;
     }
 
-    public void setFluid(Boolean fluid) {
-        this.isFluid = fluid;
+    public void setFluid(boolean isFluid) {
+        this.isFluid = isFluid;
     }
 
-    public Integer getLightAttenuation() {
-        return this.lightAttenuation;
+    public int getLightAttenuation() {
+        return this.lightAttenuation == null ? 0 : this.lightAttenuation;
     }
 
-    public void setLightAttenuation(Integer lightAttenuation) {
+    public void setLightAttenuation(int lightAttenuation) {
         this.lightAttenuation = lightAttenuation;
     }
 
-    public Integer getLightLevelRed() {
-        return this.lightLevelRed;
+    public int getLightLevelRed() {
+        return this.lightLevelRed == null ? 0 : this.lightLevelRed;
     }
 
-    public void setLightLevelRed(Integer lightLevelRed) {
+    public void setLightLevelRed(int lightLevelRed) {
         this.lightLevelRed = lightLevelRed;
     }
 
-    public Integer getLightLevelGreen() {
-        return this.lightLevelGreen;
+    public int getLightLevelGreen() {
+        return this.lightLevelGreen == null ? 0 : this.lightLevelGreen;
     }
 
-    public void setLightLevelGreen(Integer lightLevelGreen) {
+    public void setLightLevelGreen(int lightLevelGreen) {
         this.lightLevelGreen = lightLevelGreen;
     }
 
-    public Integer getLightLevelBlue() {
-        return this.lightLevelBlue;
+    public int getLightLevelBlue() {
+        return this.lightLevelBlue == null ? 0 : this.lightLevelBlue;
     }
 
-    public void setLightLevelBlue(Integer lightLevelBlue) {
+    public void setLightLevelBlue(int lightLevelBlue) {
         this.lightLevelBlue = lightLevelBlue;
     }
 
-    public Integer getRotXZ() {
-        return this.rotXZ;
+    public int getRotXZ() {
+        return this.rotXZ == null ? 0 : this.rotXZ;
     }
 
-    public void setRotXZ(Integer rotXZ) {
+    public void setRotXZ(int rotXZ) {
         this.rotXZ = rotXZ;
     }
 
-    public Float getHardness() {
-        return this.hardness;
+    public float getHardness() {
+        return this.hardness == null ? 0.0f : this.hardness;
     }
 
-    public void setHardness(Float hardness) {
+    public void setHardness(float hardness) {
         this.hardness = hardness;
     }
 
-    public Float getBlastResistance() {
-        return this.blastResistance;
+    public float getBlastResistance() {
+        return this.blastResistance == null ? 0.0f : this.blastResistance;
     }
 
-    public void setBlastResistance(Float blastResistance) {
+    public void setBlastResistance(float blastResistance) {
         this.blastResistance = blastResistance;
     }
 
@@ -260,6 +263,30 @@ public class BlockState {
 
     public void setCanPlace(CanPlace canPlace) {
         this.canPlace = canPlace;
+    }
+
+    public float getFriction() {
+        return this.friction == null ? 0.0f : this.friction;
+    }
+
+    public void setFriction(float friction) {
+        this.friction = friction;
+    }
+
+    public float getBounciness() {
+        return this.bounciness == null ? 0.0f : this.bounciness;
+    }
+
+    public void setBounciness(float bounciness) {
+        this.bounciness = bounciness;
+    }
+
+    public float getRefractiveIndex() {
+        return this.refractiveIndex == null ? 0.0f : this.refractiveIndex;
+    }
+
+    public void setRefractiveIndex(float refractiveIndex) {
+        this.refractiveIndex = refractiveIndex;
     }
 
     public BlockModel getBlockModel() {
