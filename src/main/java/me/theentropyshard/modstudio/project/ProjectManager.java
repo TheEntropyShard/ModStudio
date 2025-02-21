@@ -59,16 +59,26 @@ public class ProjectManager {
                 continue;
             }
 
-            Path projectFile = path.resolve("project.json");
+            Project project;
 
-            if (!Files.exists(projectFile)) {
-                continue;
+            Path projectFile = path.resolve("project.json");
+            boolean notExist = !Files.exists(projectFile);
+
+            if (notExist) {
+                String fileName = path.getFileName().toString();
+
+                project = new Project(fileName, fileName, "0.0.1");
+            } else {
+                project = Json.parse(FileUtils.readUtf8(projectFile), Project.class);
             }
 
-            Project project = Json.parse(FileUtils.readUtf8(projectFile), Project.class);
             project.setWorkDir(path);
 
-            this.projects.add(project);
+            if (notExist) {
+                project.save();
+            }
+
+            this.cacheProject(project);
         }
     }
 
