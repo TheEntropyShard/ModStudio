@@ -18,6 +18,7 @@
 
 package me.theentropyshard.modstudio.project;
 
+import com.google.gson.reflect.TypeToken;
 import me.theentropyshard.modstudio.cosmic.block.Block;
 import me.theentropyshard.modstudio.cosmic.block.BlockState;
 import me.theentropyshard.modstudio.cosmic.block.model.BlockModel;
@@ -29,6 +30,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class ProjectManager {
 
     private final List<Project> projects;
     private final Map<String, Project> projectsByNamespace;
+    private final Map<String, String> recentProjects;
 
     private Project currentProject;
 
@@ -49,9 +52,39 @@ public class ProjectManager {
 
         this.projects = new ArrayList<>();
         this.projectsByNamespace = new HashMap<>();
+        this.recentProjects = new HashMap<>();
     }
 
     public void load() throws IOException {
+        this.loadRecentProjects();
+        this.loadProjects();
+    }
+
+    private void loadRecentProjects() throws IOException {
+        Path recentProjectsFile = this.workDir.resolve("recent_projects.json");
+
+        if (!Files.exists(recentProjectsFile)) {
+            return;
+        }
+
+        if (!Files.isRegularFile(recentProjectsFile)) {
+            return;
+        }
+
+        String content = FileUtils.readUtf8(recentProjectsFile);
+
+        Type type = TypeToken.getParameterized(Map.class, String.class, String.class).getType();
+
+        this.recentProjects.putAll(Json.parse(content, type));
+    }
+
+    public void saveRecentProjects() throws IOException {
+        Path recentProjectsFile = this.workDir.resolve("recent_projects.json");
+
+        FileUtils.writeUtf8(recentProjectsFile, Json.writePretty(this.recentProjects));
+    }
+
+    private void loadProjects() throws IOException {
         List<Path> paths = FileUtils.list(this.workDir);
 
         for (Path path : paths) {
@@ -220,6 +253,10 @@ public class ProjectManager {
 
     public List<Project> getProjects() {
         return this.projects;
+    }
+
+    public Map<String, String> getRecentProjects() {
+        return this.recentProjects;
     }
 
     public Project getCurrentProject() {

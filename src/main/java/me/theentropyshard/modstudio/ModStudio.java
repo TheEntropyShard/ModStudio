@@ -20,6 +20,7 @@ package me.theentropyshard.modstudio;
 
 import me.theentropyshard.modstudio.gui.Gui;
 import me.theentropyshard.modstudio.gui.utils.WindowClosingListener;
+import me.theentropyshard.modstudio.logging.Log;
 import me.theentropyshard.modstudio.project.ProjectManager;
 import me.theentropyshard.modstudio.utils.FileUtils;
 
@@ -48,7 +49,7 @@ public class ModStudio {
         ModStudio.instance = this;
 
         if (args.hasUnknownOptions()) {
-            System.out.println("[WARN]: Unknown options: " + args.getUnknownOptions());
+            Log.warn("Unknown options: " + args.getUnknownOptions());
         }
 
         this.args = args;
@@ -59,9 +60,7 @@ public class ModStudio {
         try {
             this.createDirectories();
         } catch (IOException e) {
-            System.err.println("Could not create ModStudio directories");
-
-            e.printStackTrace();
+            Log.error("Could not create ModStudio directories", e);
 
             System.exit(1);
         }
@@ -70,9 +69,7 @@ public class ModStudio {
         try {
             this.projectManager.load();
         } catch (IOException e) {
-            System.err.println("Could not load projects");
-
-            e.printStackTrace();
+            Log.error("Could not load projects", e);
 
             System.exit(1);
         }
@@ -86,15 +83,11 @@ public class ModStudio {
                 this.gui.show();
             });
         } catch (InterruptedException e) {
-            System.err.println("Could not wait for GUI to show");
-
-            e.printStackTrace();
+            Log.error("Could not wait for GUI to show", e);
 
             this.shutdown(1);
         } catch (InvocationTargetException e) {
-            System.err.println("There was an error creating the GUI");
-
-            e.printStackTrace();
+            Log.error("There was an error creating the GUI", e);
 
             this.shutdown(1);
         }
@@ -126,7 +119,7 @@ public class ModStudio {
             try {
                 this.projectManager.getCurrentProject().save();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.error("Could not save current project", e);
             }
         }
 

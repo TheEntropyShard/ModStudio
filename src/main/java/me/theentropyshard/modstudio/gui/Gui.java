@@ -28,6 +28,7 @@ import me.theentropyshard.modstudio.gui.utils.SwingUtils;
 import me.theentropyshard.modstudio.gui.utils.Worker;
 import me.theentropyshard.modstudio.gui.view.project.ProjectView;
 import me.theentropyshard.modstudio.gui.view.welcome.WelcomeView;
+import me.theentropyshard.modstudio.logging.Log;
 import me.theentropyshard.modstudio.project.Project;
 import me.theentropyshard.modstudio.project.ProjectManager;
 import me.theentropyshard.modstudio.utils.FileUtils;
@@ -110,7 +111,7 @@ public class Gui {
                         try {
                             manager.loadProject(project);
                         } catch (IOException ex) {
-                            ex.printStackTrace();
+                            Log.error("Could not load project " + project.getNamespace(), ex);
 
                             return null;
                         }
@@ -214,7 +215,7 @@ public class Gui {
                 try (ZipFile zipFile = new ZipFile(pathString + File.separator + fileName)) {
                     zipFile.addFolder(project.getWorkDir().toFile());
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Log.error("Could not export project " + project.getNamespace() + " as zip", ex);
                 }
             });
         });

@@ -19,6 +19,7 @@
 package me.theentropyshard.modstudio.utils;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import me.theentropyshard.modstudio.logging.Log;
 
 import java.io.IOException;
 
@@ -27,6 +28,8 @@ public final class FlatLafUtils {
         try {
             return new FlatSVGIcon(FlatLafUtils.class.getResourceAsStream(path));
         } catch (IOException e) {
+            Log.error("Could not load icon from path " + path, e);
+
             throw new RuntimeException(e);
         }
     }

@@ -22,6 +22,7 @@ import me.theentropyshard.modstudio.ModStudio;
 import me.theentropyshard.modstudio.gui.Gui;
 import me.theentropyshard.modstudio.gui.view.project.ProjectCreationView;
 import me.theentropyshard.modstudio.gui.view.project.ProjectView;
+import me.theentropyshard.modstudio.logging.Log;
 import me.theentropyshard.modstudio.project.Project;
 import me.theentropyshard.modstudio.project.ProjectManager;
 
@@ -50,7 +51,7 @@ public class NewProjectAction extends AbstractAction {
                         try {
                             manager.loadProject(project);
                         } catch (IOException ex) {
-                            ex.printStackTrace();
+                            Log.error("Could not load project " + project.getNamespace(), ex);
 
                             return;
                         }
@@ -64,7 +65,7 @@ public class NewProjectAction extends AbstractAction {
                         });
                     });
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Log.error("Could not create project " + info.getNamespace(), ex);
                 }
             });
         });

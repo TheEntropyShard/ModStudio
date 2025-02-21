@@ -16,23 +16,26 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modstudio;
+package me.theentropyshard.modstudio.logging;
 
-import me.theentropyshard.modstudio.logging.Log;
+import javax.swing.*;
+import java.awt.*;
 
-public class Main {
-    public static void main(String[] args) {
-        Args theArgs = Args.parse(args);
+public enum LogLevel {
+    INFO, WARN, ERROR, DEBUG;
 
-        System.setProperty("modstudio.logsDir", theArgs.getWorkDir().resolve("logs").toString());
-
-        Log.start();
-
-        try {
-            new ModStudio(theArgs, theArgs.getWorkDir());
-        } catch (Throwable t) {
-            Log.error("Unable to start ModStudio", t);
-            System.exit(1);
+    public Color color() {
+        switch (this) {
+            case INFO:
+                return UIManager.getColor("LauncherConsole.infoColor");
+            case WARN:
+                return UIManager.getColor("LauncherConsole.warnColor");
+            case ERROR:
+                return UIManager.getColor("LauncherConsole.errorColor");
+            case DEBUG:
+                return UIManager.getColor("LauncherConsole.debugColor");
+            default:
+                throw new IllegalArgumentException("Unreachable");
         }
     }
 }

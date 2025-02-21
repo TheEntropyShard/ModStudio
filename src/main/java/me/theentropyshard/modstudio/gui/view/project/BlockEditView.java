@@ -30,6 +30,7 @@ import me.theentropyshard.modstudio.gui.RenderOptions;
 import me.theentropyshard.modstudio.gui.components.AccordionPanel;
 import me.theentropyshard.modstudio.gui.utils.MouseListenerBuilder;
 import me.theentropyshard.modstudio.gui.utils.Worker;
+import me.theentropyshard.modstudio.logging.Log;
 import me.theentropyshard.modstudio.project.Project;
 import me.theentropyshard.modstudio.project.ProjectManager;
 import me.theentropyshard.modstudio.utils.FileUtils;
@@ -146,9 +147,7 @@ public class BlockEditView extends JPanel {
                             try {
                                 image = ImageIO.read(path.toFile());
                             } catch (IOException ex) {
-                                System.err.println("Could not read image " + path);
-
-                                ex.printStackTrace();
+                                Log.error("Could not read image " + path, ex);
 
                                 return;
                             }
@@ -171,7 +170,7 @@ public class BlockEditView extends JPanel {
                                 FileUtils.createDirectoryIfNotExists(blocksDir);
                                 FileUtils.writeUtf8(blocksDir.resolve(blockName + ".json"), Json.writePretty(block));
                             } catch (IOException ex) {
-                                ex.printStackTrace();
+                                Log.error("Could not write block " + blockName, ex);
 
                                 return;
                             }
@@ -181,7 +180,7 @@ public class BlockEditView extends JPanel {
                                 FileUtils.createDirectoryIfNotExists(modelsDir);
                                 FileUtils.writeUtf8(modelsDir.resolve("model_" + blockName + ".json"), Json.writePretty(blockModel));
                             } catch (IOException ex) {
-                                ex.printStackTrace();
+                                Log.error("Could not write model for " + blockName, ex);
 
                                 return;
                             }
@@ -230,9 +229,7 @@ public class BlockEditView extends JPanel {
                             try {
                                 image = ImageIO.read(path.toFile());
                             } catch (IOException ex) {
-                                System.err.println("Could not read image " + path);
-
-                                ex.printStackTrace();
+                                Log.error("Could not read image " + path, ex);
 
                                 return;
                             }
@@ -257,7 +254,7 @@ public class BlockEditView extends JPanel {
                                 FileUtils.createDirectoryIfNotExists(blocksDir);
                                 FileUtils.writeUtf8(blocksDir.resolve(blockName + ".json"), Json.writePretty(block));
                             } catch (IOException ex) {
-                                ex.printStackTrace();
+                                Log.error("Could not write block " + blockName, ex);
 
                                 return;
                             }
@@ -267,7 +264,7 @@ public class BlockEditView extends JPanel {
                                 FileUtils.createDirectoryIfNotExists(modelsDir);
                                 FileUtils.writeUtf8(modelsDir.resolve("model_" + blockName + ".json"), Json.writePretty(blockModel));
                             } catch (IOException ex) {
-                                ex.printStackTrace();
+                                Log.error("Could not write model for " + blockName, ex);
 
                                 return;
                             }
@@ -316,9 +313,7 @@ public class BlockEditView extends JPanel {
                             try {
                                 image = ImageIO.read(path.toFile());
                             } catch (IOException ex) {
-                                System.err.println("Could not read image " + path);
-
-                                ex.printStackTrace();
+                                Log.error("Could not read image " + path, ex);
 
                                 return;
                             }
@@ -343,7 +338,7 @@ public class BlockEditView extends JPanel {
                                 FileUtils.createDirectoryIfNotExists(blocksDir);
                                 FileUtils.writeUtf8(blocksDir.resolve(blockName + ".json"), Json.writePretty(block));
                             } catch (IOException ex) {
-                                ex.printStackTrace();
+                                Log.error("Could not write block " + blockName, ex);
 
                                 return;
                             }
@@ -353,7 +348,7 @@ public class BlockEditView extends JPanel {
                                 FileUtils.createDirectoryIfNotExists(modelsDir);
                                 FileUtils.writeUtf8(modelsDir.resolve("model_" + blockName + ".json"), Json.writePretty(blockModel));
                             } catch (IOException ex) {
-                                ex.printStackTrace();
+                                Log.error("Could not write model for " + blockName, ex);
 
                                 return;
                             }

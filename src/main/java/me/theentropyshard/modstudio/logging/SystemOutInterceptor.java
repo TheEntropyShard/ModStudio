@@ -16,23 +16,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.theentropyshard.modstudio;
+package me.theentropyshard.modstudio.logging;
 
-import me.theentropyshard.modstudio.logging.Log;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
-public class Main {
-    public static void main(String[] args) {
-        Args theArgs = Args.parse(args);
+public class SystemOutInterceptor extends PrintStream {
+    private final LogLevel level;
 
-        System.setProperty("modstudio.logsDir", theArgs.getWorkDir().resolve("logs").toString());
+    public SystemOutInterceptor(OutputStream out, LogLevel level) {
+        super(out, true);
 
-        Log.start();
+        this.level = level;
+    }
 
-        try {
-            new ModStudio(theArgs, theArgs.getWorkDir());
-        } catch (Throwable t) {
-            Log.error("Unable to start ModStudio", t);
-            System.exit(1);
+    @Override
+    public void print(String s) {
+        super.print(s);
+
+        if (this.level == LogLevel.ERROR) {
+            Log.error(s);
+        } else {
+            Log.debug(s);
         }
     }
 }

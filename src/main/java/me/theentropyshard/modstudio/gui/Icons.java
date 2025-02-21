@@ -19,6 +19,7 @@
 package me.theentropyshard.modstudio.gui;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import me.theentropyshard.modstudio.logging.Log;
 import me.theentropyshard.modstudio.utils.FlatLafUtils;
 
 import javax.swing.*;
@@ -56,7 +57,9 @@ public class Icons {
         FlatSVGIcon icon = Icons.ICONS.get(name);
 
         if (icon == null) {
-            throw new RuntimeException("Icon with name " + name + " does not exist");
+            Log.warn("Icon with name " + name + " does not exist");
+
+            throw new RuntimeException();
         }
 
         return icon;
