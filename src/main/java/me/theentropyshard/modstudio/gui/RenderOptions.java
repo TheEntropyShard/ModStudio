@@ -12,15 +12,19 @@ public class RenderOptions {
         return this.scale;
     }
 
-    public void setScale(int scale) {
+    public RenderOptions setScale(int scale) {
         this.scale = scale;
+
+        return this;
     }
 
     public boolean isNoShadow() {
         return this.noShadow;
     }
 
-    public void setNoShadow(boolean noShadow) {
+    public RenderOptions setNoShadow(boolean noShadow) {
         this.noShadow = noShadow;
+
+        return this;
     }
 }

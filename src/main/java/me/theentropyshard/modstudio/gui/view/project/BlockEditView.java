@@ -35,6 +35,8 @@ import me.theentropyshard.modstudio.project.Project;
 import me.theentropyshard.modstudio.project.ProjectManager;
 import me.theentropyshard.modstudio.utils.FileUtils;
 import me.theentropyshard.modstudio.utils.ImageUtils;
+import me.theentropyshard.modstudio.utils.Lazy;
+import me.theentropyshard.modstudio.utils.ResourceUtils;
 import me.theentropyshard.modstudio.utils.json.Json;
 import net.miginfocom.swing.MigLayout;
 
@@ -53,6 +55,18 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 public class BlockEditView extends JPanel {
+    private static final Lazy<ImageIcon> NO_TEXTURE_ICON = Lazy.of(() -> {
+        BufferedImage noTextureImage = ResourceUtils.loadImage("/no_texture.png");
+
+        RenderOptions options = new RenderOptions().setScale(2);
+
+        return new ImageIcon(
+            ImageUtils.fitImageAndResize(
+                IsometricBlockRenderer.render(noTextureImage, noTextureImage, noTextureImage, options), 64, 64
+            )
+        );
+    });
+
     private final JLabel blockStringIdLabel;
 
     private JFileChooser fileChooser;
@@ -82,14 +96,14 @@ public class BlockEditView extends JPanel {
         ProjectManager projectManager = ModStudio.getInstance().getProjectManager();
         Project currentProject = projectManager.getCurrentProject();
         JPanel panel = new JPanel(new MigLayout("fill", "[left][fill, center]", "[top]"));
-        JLabel iconLabel = new JLabel(BlockEditView.generateBlockIcon(blockState)) {
+        JLabel iconLabel = new JLabel(BlockEditView.NO_TEXTURE_ICON.get()) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                 g2d.setColor(this.getBackground());
-                g2d.fillRoundRect(0,0, this.getWidth(), this.getHeight(), 10, 10);
+                g2d.fillRoundRect(0, 0, this.getWidth(), this.getHeight(), 10, 10);
 
                 super.paintComponent(g);
 

@@ -18,7 +18,13 @@
 
 package me.theentropyshard.modstudio.utils;
 
+import me.theentropyshard.modstudio.gui.view.project.BlockEditView;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 
 public final class ResourceUtils {
     public static byte[] readToByteArray(String path) throws IOException {
@@ -27,6 +33,18 @@ public final class ResourceUtils {
 
     public static String readToString(String path) throws IOException {
         return StreamUtils.readToString(ResourceUtils.class.getResourceAsStream(path));
+    }
+
+    public static BufferedImage loadImage(String path) {
+        BufferedImage image;
+
+        try (InputStream inputStream = BlockEditView.class.getResourceAsStream(path)) {
+            image = ImageIO.read(Objects.requireNonNull(inputStream));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return image;
     }
 
     private ResourceUtils() {
