@@ -96,7 +96,10 @@ public class BlockEditView extends JPanel {
         ProjectManager projectManager = ModStudio.getInstance().getProjectManager();
         Project currentProject = projectManager.getCurrentProject();
         JPanel panel = new JPanel(new MigLayout("fill", "[left][fill, center]", "[top]"));
-        JLabel iconLabel = new JLabel(BlockEditView.NO_TEXTURE_ICON.get()) {
+        Icon initialBlockStateIcon = BlockEditView.generateBlockIcon(blockState);
+        JLabel iconLabel = new JLabel(
+            initialBlockStateIcon == null ? BlockEditView.NO_TEXTURE_ICON.get() : initialBlockStateIcon
+        ) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2d = (Graphics2D) g;
@@ -489,13 +492,13 @@ public class BlockEditView extends JPanel {
         BlockModel blockModel = blockState.getBlockModel();
 
         if (blockModel == null) {
-            return Icons.MOD_DEFAULT_TEXTURE;
+            return null;
         }
 
         Map<String, BlockModelTexture> textures = blockModel.getTextures();
 
         if (textures == null) {
-            return Icons.MOD_DEFAULT_TEXTURE;
+            return null;
         }
 
         BufferedImage texture = null;
@@ -528,7 +531,7 @@ public class BlockEditView extends JPanel {
             }
         }
 
-        return texture == null ? Icons.MOD_DEFAULT_TEXTURE : new ImageIcon(ImageUtils.fitImageAndResize(
+        return texture == null ? null : new ImageIcon(ImageUtils.fitImageAndResize(
             texture, 64, 64
         ));
     }
