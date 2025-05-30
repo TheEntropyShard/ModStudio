@@ -37,6 +37,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
@@ -148,6 +150,18 @@ public class ProjectTree extends JTree {
             try {
                 FileUtils.createDirectoryIfNotExists(modelsDir);
                 FileUtils.writeUtf8(modelsDir.resolve("model_" + blockName + ".json"), Json.writePretty(blockModel));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+
+                return;
+            }
+
+            Path texturesDir = currentProject.getWorkDir().resolve("textures").resolve("blocks");
+            try {
+                FileUtils.createDirectoryIfNotExists(texturesDir);
+                try (InputStream inputStream = ProjectTree.class.getResourceAsStream("/no_texture.png")) {
+                    Files.copy(Objects.requireNonNull(inputStream), texturesDir.resolve(blockName + ".png"));
+                }
             } catch (IOException ex) {
                 ex.printStackTrace();
 
