@@ -23,6 +23,7 @@ import me.theentropyshard.modstudio.cosmic.block.Block;
 import me.theentropyshard.modstudio.cosmic.block.BlockState;
 import me.theentropyshard.modstudio.cosmic.block.model.BlockModel;
 import me.theentropyshard.modstudio.cosmic.block.model.BlockModelTexture;
+import me.theentropyshard.modstudio.gui.view.block.AddBlockView;
 import me.theentropyshard.modstudio.project.Project;
 import me.theentropyshard.modstudio.project.ProjectManager;
 import me.theentropyshard.modstudio.utils.FileUtils;
@@ -101,81 +102,80 @@ public class ProjectTree extends JTree {
                 return;
             }
 
-            String blockName = JOptionPane.showInputDialog(
-                ModStudio.getInstance().getGui().getFrame(),
-                "Enter a block name"
-            );
+            AddBlockView.showDialog().getAddBlockInfo().ifPresent(info -> {
+                String blockName = info.getName();
 
-            if (blockName == null || blockName.isEmpty()) {
-                return;
-            }
-
-            ProjectManager projectManager = ModStudio.getInstance().getProjectManager();
-            Project currentProject = projectManager.getCurrentProject();
-
-            Block block = new Block();
-            String namespace = currentProject.getNamespace();
-            block.setStringId(namespace + ":" + blockName);
-
-            Map<String, BlockState> blockStateMap = new HashMap<>();
-
-            BlockState blockState = new BlockState();
-            blockState.setModelName(namespace + ":" + "models/blocks/model_" + blockName + ".json");
-            blockState.setStateGenerators(List.of("base:slabs_seamless_all", "base:stairs_seamless_all"));
-
-            BlockModel blockModel = new BlockModel();
-            blockModel.setParent("base:models/blocks/cube.json");
-            blockState.setBlockModel(blockModel);
-
-            Map<String, BlockModelTexture> textureMap = new HashMap<>();
-            blockModel.setTextures(textureMap);
-
-            blockStateMap.put("default", blockState);
-
-            block.setBlockStates(blockStateMap);
-
-            currentProject.addBlock(block);
-
-            Path blocksDir = currentProject.getWorkDir().resolve("blocks");
-            try {
-                FileUtils.createDirectoryIfNotExists(blocksDir);
-                FileUtils.writeUtf8(blocksDir.resolve(blockName + ".json"), Json.writePretty(block));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-
-                return;
-            }
-
-            Path modelsDir = currentProject.getWorkDir().resolve("models").resolve("blocks");
-            try {
-                FileUtils.createDirectoryIfNotExists(modelsDir);
-                FileUtils.writeUtf8(modelsDir.resolve("model_" + blockName + ".json"), Json.writePretty(blockModel));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-
-                return;
-            }
-
-            Path texturesDir = currentProject.getWorkDir().resolve("textures").resolve("blocks");
-            try {
-                FileUtils.createDirectoryIfNotExists(texturesDir);
-                try (InputStream inputStream = ProjectTree.class.getResourceAsStream("/no_texture.png")) {
-                    Files.copy(Objects.requireNonNull(inputStream), texturesDir.resolve(blockName + ".png"));
+                if (blockName == null || blockName.isEmpty()) {
+                    return;
                 }
-            } catch (IOException ex) {
-                ex.printStackTrace();
 
-                return;
-            }
+                ProjectManager projectManager = ModStudio.getInstance().getProjectManager();
+                Project currentProject = projectManager.getCurrentProject();
 
-            ProjectTreeNode newNode = new ProjectTreeNode(namespace + ":" + blockName, ProjectTreeNode.Type.FILE, block);
-            model.insertNodeInto(newNode, this.blocksNode, /*this.blocksNode.getChildCount()*/0);
-            model.nodeStructureChanged(this.blocksNode);
-            this.expandPath(new TreePath(this.rootNode.getPath()));
-            TreePath path = new TreePath(newNode.getPath());
-            this.scrollPathToVisible(path);
+                Block block = new Block();
+                String namespace = currentProject.getNamespace();
+                block.setStringId(namespace + ":" + blockName);
 
-            this.newBlockListeners.forEach(listener -> listener.onNewBlock(namespace + ":" + blockName));
+                Map<String, BlockState> blockStateMap = new HashMap<>();
+
+                BlockState blockState = new BlockState();
+                blockState.setModelName(namespace + ":" + "models/blocks/model_" + blockName + ".json");
+                blockState.setStateGenerators(List.of("base:slabs_seamless_all", "base:stairs_seamless_all"));
+
+                BlockModel blockModel = new BlockModel();
+                blockModel.setParent("base:models/blocks/cube.json");
+                blockState.setBlockModel(blockModel);
+
+                Map<String, BlockModelTexture> textureMap = new HashMap<>();
+                blockModel.setTextures(textureMap);
+
+                blockStateMap.put("default", blockState);
+
+                block.setBlockStates(blockStateMap);
+
+                currentProject.addBlock(block);
+
+                Path blocksDir = currentProject.getWorkDir().resolve("blocks");
+                try {
+                    FileUtils.createDirectoryIfNotExists(blocksDir);
+                    FileUtils.writeUtf8(blocksDir.resolve(blockName + ".json"), Json.writePretty(block));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+
+                    return;
+                }
+
+                Path modelsDir = currentProject.getWorkDir().resolve("models").resolve("blocks");
+                try {
+                    FileUtils.createDirectoryIfNotExists(modelsDir);
+                    FileUtils.writeUtf8(modelsDir.resolve("model_" + blockName + ".json"), Json.writePretty(blockModel));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+
+                    return;
+                }
+
+                Path texturesDir = currentProject.getWorkDir().resolve("textures").resolve("blocks");
+                try {
+                    FileUtils.createDirectoryIfNotExists(texturesDir);
+                    try (InputStream inputStream = ProjectTree.class.getResourceAsStream("/no_texture.png")) {
+                        Files.copy(Objects.requireNonNull(inputStream), texturesDir.resolve(blockName + ".png"));
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+
+                    return;
+                }
+
+                ProjectTreeNode newNode = new ProjectTreeNode(namespace + ":" + blockName, ProjectTreeNode.Type.FILE, block);
+                model.insertNodeInto(newNode, this.blocksNode, /*this.blocksNode.getChildCount()*/0);
+                model.nodeStructureChanged(this.blocksNode);
+                this.expandPath(new TreePath(this.rootNode.getPath()));
+                TreePath path = new TreePath(newNode.getPath());
+                this.scrollPathToVisible(path);
+
+                this.newBlockListeners.forEach(listener -> listener.onNewBlock(namespace + ":" + blockName));
+            });
         });
 
         deleteBlockItem.addActionListener(e -> {
