@@ -120,7 +120,18 @@ public class ProjectTree extends JTree {
 
                 BlockState blockState = new BlockState();
                 blockState.setModelName(namespace + ":" + "models/blocks/model_" + blockName + ".json");
-                blockState.setStateGenerators(List.of("base:slabs_seamless_all", "base:stairs_seamless_all"));
+
+                List<String> stateGenerators = new ArrayList<>();
+
+                if (info.isGenerateSlabs()) {
+                    stateGenerators.add("base:slabs_seamless_all");
+                }
+
+                if (info.isGenerateStairs()) {
+                    stateGenerators.add("base:stairs_seamless_all");
+                }
+
+                blockState.setStateGenerators(stateGenerators);
 
                 BlockModel blockModel = new BlockModel();
                 blockModel.setParent("base:models/blocks/cube.json");
