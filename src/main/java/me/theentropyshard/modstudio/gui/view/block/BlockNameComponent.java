@@ -31,6 +31,8 @@ public class BlockNameComponent extends JPanel {
     public BlockNameComponent(Listener listener) {
         super(new MigLayout("fill, insets 5", "[]", "[][]"));
 
+        listener.onChange(false);
+
         this.actualBlockNameLabel = new JLabel("Actual name: ");
 
         this.blockNameField = new JTextField();
@@ -38,22 +40,16 @@ public class BlockNameComponent extends JPanel {
         this.blockNameField.getDocument().addDocumentListener(new SimpleDocumentListener(() -> {
             String text = this.blockNameField.getText();
 
-            boolean valid;
-
-            if (text.isEmpty()) {
-                valid = false;
-            } else {
-                valid = true;
-            }
+            boolean valid = !text.isEmpty();
 
             listener.onChange(valid);
 
-            this.actualBlockNameLabel.setText("Actual name: " + text.replace(" ", "_"));
-
             if (valid) {
                 this.blockNameField.putClientProperty(FlatClientProperties.OUTLINE, null);
+                this.actualBlockNameLabel.setText("Actual name: " + this.getBlockName());
             } else {
                 this.blockNameField.putClientProperty(FlatClientProperties.OUTLINE, FlatClientProperties.OUTLINE_ERROR);
+                this.actualBlockNameLabel.setText("Name must not be empty!");
             }
         }));
 
